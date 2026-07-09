@@ -6,93 +6,206 @@
 <title>Clone Marketplace</title>
 <style>
   :root {
-    --bg: #0f1117; --card: #1a1d27; --text: #e8eaf0; --muted: #9aa0b0;
-    --accent: #5b8cff; --accent2: #7c5bff; --border: #2a2e3d; --chip: #242837;
+    --bg: #f5f5f7; --surface: #ffffff; --text: #1d1d1f; --muted: #6e6e73;
+    --accent: #0071e3; --border: #e5e5ea; --chip: #f0f0f2; --shadow: 0 4px 24px rgba(0,0,0,.07);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  header { max-width: 1000px; margin: 0 auto; padding: 48px 24px 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
-  h1 { font-size: 2rem; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .subtitle { color: var(--muted); margin-top: 8px; max-width: 560px; line-height: 1.5; }
-  .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .lang-toggle button { background: none; border: none; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: .9rem; }
-  .lang-toggle button.active { background: var(--accent); color: #fff; }
-  main { max-width: 1000px; margin: 0 auto; padding: 24px; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
-  .card-head { display: flex; align-items: center; gap: 12px; }
-  .card-head img { width: 44px; height: 44px; border-radius: 10px; background: var(--chip); }
-  .card h2 { font-size: 1.2rem; }
-  .clone-of { color: var(--muted); font-size: .85rem; }
-  .desc { color: var(--muted); font-size: .92rem; line-height: 1.5; flex: 1; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .chip { background: var(--chip); border-radius: 999px; padding: 3px 10px; font-size: .75rem; color: var(--muted); }
-  .meta { font-size: .78rem; color: var(--muted); }
-  .meta a { color: var(--accent); text-decoration: none; }
-  .actions { display: flex; gap: 10px; margin-top: 4px; }
-  .btn { flex: 1; text-align: center; padding: 10px 12px; border-radius: 9px; font-size: .88rem; text-decoration: none; font-weight: 600; }
-  .btn-repo { border: 1px solid var(--border); color: var(--text); }
-  .btn-deploy { background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #fff; }
-  .howto { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin: 36px 0; }
-  .howto h3 { margin-bottom: 12px; }
-  .howto ol { margin-left: 20px; color: var(--muted); line-height: 1.9; }
-  .howto code { background: var(--chip); padding: 2px 6px; border-radius: 5px; font-size: .85em; }
-  footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 24px; }
-  footer a { color: var(--accent); }
-  .loading, .error { color: var(--muted); padding: 40px; text-align: center; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #000; --surface: #1c1c1e; --text: #f5f5f7; --muted: #98989d;
+            --accent: #0a84ff; --border: #2c2c2e; --chip: #2c2c2e; --shadow: 0 4px 24px rgba(0,0,0,.5); }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  a { color: var(--accent); text-decoration: none; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+
+  /* Nav */
+  nav { position: sticky; top: 0; z-index: 40; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        background: color-mix(in srgb, var(--bg) 75%, transparent); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 980px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 16px; }
+  .brand { font-weight: 700; font-size: 1.05rem; letter-spacing: -.01em; }
+  .search { flex: 1; max-width: 340px; margin-left: auto; }
+  .search input { width: 100%; padding: 7px 14px; border-radius: 10px; border: none; background: var(--chip);
+                  color: var(--text); font-size: .9rem; outline: none; }
+  .lang-toggle { display: flex; gap: 2px; background: var(--chip); border-radius: 8px; padding: 2px; }
+  .lang-toggle button { border: none; background: none; color: var(--muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: .82rem; font-weight: 600; }
+  .lang-toggle button.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+  /* Hero */
+  .hero { margin: 28px 0 8px; }
+  .hero-label { font-size: .78rem; font-weight: 700; letter-spacing: .06em; color: var(--accent); text-transform: uppercase; }
+  .hero-card { margin-top: 8px; border-radius: 20px; overflow: hidden; background: linear-gradient(135deg, #0a84ff, #5e5ce6 60%, #bf5af2);
+               color: #fff; padding: 34px 30px; display: flex; align-items: center; gap: 26px; cursor: pointer; box-shadow: var(--shadow); }
+  .hero-card img { width: 92px; height: 92px; border-radius: 22px; box-shadow: 0 8px 20px rgba(0,0,0,.25); background: #fff2; }
+  .hero-card h2 { font-size: 1.7rem; letter-spacing: -.02em; }
+  .hero-card p { opacity: .85; margin-top: 6px; max-width: 460px; line-height: 1.45; }
+  .hero-card .get { margin-left: auto; }
+
+  /* Category chips */
+  .cats { display: flex; gap: 8px; margin: 26px 0 4px; flex-wrap: wrap; }
+  .cat { border: none; background: var(--chip); color: var(--text); padding: 7px 16px; border-radius: 999px; font-size: .85rem; cursor: pointer; font-weight: 500; }
+  .cat.active { background: var(--accent); color: #fff; }
+
+  /* Section */
+  .section-title { font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; margin: 26px 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; padding-bottom: 20px; }
+  .app-row { background: var(--surface); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 14px;
+             cursor: pointer; box-shadow: var(--shadow); transition: transform .15s ease; }
+  .app-row:hover { transform: translateY(-2px); }
+  .app-row img, .app-icon-ph { width: 62px; height: 62px; border-radius: 14px; flex-shrink: 0; object-fit: cover; }
+  .app-icon-ph { background: linear-gradient(135deg, var(--accent), #5e5ce6); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.5rem; font-weight: 700; }
+  .app-row .info { flex: 1; min-width: 0; }
+  .app-row h3 { font-size: 1rem; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .app-row .sub { color: var(--muted); font-size: .82rem; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .get { border: none; background: var(--chip); color: var(--accent); font-weight: 700; font-size: .82rem;
+         padding: 7px 18px; border-radius: 999px; cursor: pointer; flex-shrink: 0; }
+  .get.primary { background: #fff; color: #0071e3; }
+  .free-note { display: block; font-size: .62rem; color: var(--muted); text-align: center; margin-top: 3px; font-weight: 400; }
+
+  /* Detail sheet */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 50; display: none; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 4vh 16px; }
+  .overlay.open { display: flex; }
+  .sheet { background: var(--surface); border-radius: 20px; max-width: 760px; width: 100%; margin-bottom: 6vh; box-shadow: 0 24px 60px rgba(0,0,0,.35); overflow: hidden; }
+  .sheet-head { display: flex; gap: 18px; padding: 28px 28px 20px; align-items: center; }
+  .sheet-head img, .sheet-head .app-icon-ph { width: 100px; height: 100px; border-radius: 24px; }
+  .sheet-head .app-icon-ph { font-size: 2.4rem; }
+  .sheet-head h2 { font-size: 1.5rem; letter-spacing: -.02em; }
+  .sheet-head .tag { color: var(--muted); margin-top: 3px; font-size: .95rem; }
+  .sheet-head .actions { margin-left: auto; text-align: center; }
+  .close { position: absolute; margin: 14px; right: max(16px, calc(50vw - 380px)); background: var(--chip); border: none; width: 30px; height: 30px; border-radius: 50%; color: var(--muted); font-size: 1rem; cursor: pointer; z-index: 51; }
+  .stats { display: flex; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 28px; padding: 14px 0; }
+  .stat { flex: 1; text-align: center; border-right: 1px solid var(--border); padding: 0 8px; }
+  .stat:last-child { border-right: none; }
+  .stat .k { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+  .stat .v { font-size: 1.02rem; font-weight: 600; margin-top: 3px; }
+  .stat .u { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+  .shots { display: flex; gap: 12px; overflow-x: auto; padding: 20px 28px 6px; scroll-snap-type: x mandatory; }
+  .shots img { height: 380px; border-radius: 14px; scroll-snap-align: start; border: 1px solid var(--border); }
+  .sheet-body { padding: 20px 28px 28px; }
+  .sheet-body h4 { font-size: 1.05rem; margin: 20px 0 8px; }
+  .sheet-body p { color: var(--text); line-height: 1.55; font-size: .95rem; }
+  .need { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 8px; margin-top: 10px; }
+  .need div { background: var(--chip); border-radius: 10px; padding: 10px 12px; font-size: .85rem; }
+  .need .nk { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+  .infogrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; margin-top: 8px; }
+  .infogrid .item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: .88rem; }
+  .infogrid .item span:first-child { color: var(--muted); }
+  .deploy-note { background: var(--chip); border-radius: 12px; padding: 14px 16px; margin-top: 20px; font-size: .88rem; line-height: 1.5; color: var(--muted); }
+
+  /* Publish strip */
+  .strip { background: var(--surface); border-radius: 16px; padding: 24px; margin: 30px 0 40px; box-shadow: var(--shadow); }
+  .strip h3 { font-size: 1.1rem; margin-bottom: 10px; }
+  .strip ol { margin-left: 20px; color: var(--muted); line-height: 1.9; font-size: .92rem; }
+  code { background: var(--chip); padding: 2px 6px; border-radius: 5px; font-size: .85em; }
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 26px 20px 40px; line-height: 1.6; }
+  .loading, .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
+  @media (max-width: 640px) {
+    .hero-card { flex-direction: column; text-align: center; padding: 26px 20px; }
+    .hero-card .get { margin: 0 auto; }
+    .infogrid { grid-template-columns: 1fr; }
+    .shots img { height: 300px; }
+    .search { display: none; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>Clone Marketplace</h1>
-    <p class="subtitle" data-i18n="subtitle"></p>
+<nav>
+  <div class="nav-inner">
+    <span class="brand">Clone Marketplace</span>
+    <div class="search"><input id="q" type="search" oninput="render()" data-i18n-ph="search"></div>
+    <div class="lang-toggle">
+      <button id="btn-es" onclick="setLang('es')">ES</button>
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
   </div>
-  <div class="lang-toggle">
-    <button id="btn-es" onclick="setLang('es')">ES</button>
-    <button id="btn-en" onclick="setLang('en')">EN</button>
-  </div>
-</header>
-<main>
-  <div id="apps" class="grid"><div class="loading" data-i18n="loading"></div></div>
-  <section class="howto">
+</nav>
+
+<div class="wrap">
+  <section class="hero" id="hero" hidden>
+    <div class="hero-label" data-i18n="featured"></div>
+    <div class="hero-card" id="heroCard"></div>
+  </section>
+
+  <div class="cats" id="cats"></div>
+
+  <h2 class="section-title" data-i18n="allApps"></h2>
+  <div class="grid" id="apps"><div class="loading" data-i18n="loading"></div></div>
+
+  <section class="strip">
     <h3 data-i18n="howtoTitle"></h3>
     <ol id="howtoSteps"></ol>
   </section>
-  <section class="howto">
+  <section class="strip" style="margin-top:-14px">
     <h3 data-i18n="publishTitle"></h3>
     <ol id="publishSteps"></ol>
   </section>
-</main>
+</div>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
+  <button class="close" onclick="closeSheet()">✕</button>
+  <div class="sheet" id="sheet"></div>
+</div>
+
 <footer>
-  <span data-i18n="footer"></span> · <a href="https://github.com/ficiverson/open-clone-marketplace" data-i18n="contribute"></a>
+  <span data-i18n="footer"></span><br>
+  <a href="https://github.com/ficiverson/open-clone-marketplace" data-i18n="contribute"></a>
 </footer>
+
 <script>
 const I18N = {
   es: {
-    subtitle: "Apps clónicas open source que despliegas en tu propia cuenta. Tus datos, tu instancia, gratis.",
+    search: "Buscar apps",
+    featured: "Destacada",
+    allApps: "Todas las apps",
     loading: "Cargando catálogo…",
+    empty: "No hay apps que coincidan.",
+    all: "Todas",
+    get: "OBTENER", free: "Gratis · tu instancia",
+    deploy: "Desplegar con Claude", viewRepo: "Ver código", issues: "Soporte",
+    cloneOf: "clon de", by: "por",
+    catNames: { finance: "Finanzas", productivity: "Productividad", social: "Social", media: "Media", communication: "Comunicación", health: "Salud", other: "Otras" },
+    stDev: "Autor", stCat: "Categoría", stLic: "Licencia", stTime: "Despliegue", stPlat: "Plataformas", min: "min",
+    screenshots: "Capturas",
+    about: "Descripción",
+    need: "Qué necesitas",
+    needTools: "Herramienta", needAccount: "Cuenta",
+    info: "Información",
+    infoRows: { version: "Versión", published: "Publicada", updated: "Actualizada", backend: "Backend", auth: "Login", repo: "Repositorio", license: "Licencia" },
+    deployNote: "Para desplegarla sin saber programar: descarga la skill <a href='skill/clone-deployer.skill'>clone-deployer</a>, instálala en Claude y pídele «despliega esta app: <enlace del repo>». Tendrás tu propia instancia con tus datos.",
     howtoTitle: "¿Cómo despliego una app? (sin saber programar)",
     howtoSteps: [
       "Descarga la skill <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> e instálala en Claude (arrastra el archivo al chat o Ajustes → Capacidades).",
       "Elige una app del catálogo y copia el enlace de su repositorio.",
-      "Pídele a Claude: <em>“despliega esta app: &lt;enlace&gt;”</em>.",
+      "Pídele a Claude: <em>«despliega esta app: &lt;enlace&gt;»</em>.",
       "Claude lee el manifest de la app y te guía paso a paso hasta que está online."
     ],
     publishTitle: "¿Tienes una app clónica? Publícala",
     publishSteps: [
       "Instala la skill <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> en Claude y pídele que genere el <code>clonefest.json</code> de tu repo.",
       "Haz commit del manifest en la raíz de tu repositorio.",
-      "Abre un PR añadiendo tu manifest a <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (ver <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guía</a>). La CI lo valida y lo revisamos antes del merge."
+      "Abre un PR añadiendo tu manifest a <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (ver <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guía</a>)."
     ],
     footer: "Clone Marketplace — apps clónicas autoalojadas. Proyectos independientes sin afiliación con las apps originales.",
-    contribute: "Publica tu app",
-    viewRepo: "Ver código", deploy: "Desplegar con Claude",
-    by: "por", published: "publicado", cloneOf: "clon de"
+    contribute: "Publica tu app"
   },
   en: {
-    subtitle: "Open-source clone apps you deploy on your own account. Your data, your instance, free.",
+    search: "Search apps",
+    featured: "Featured",
+    allApps: "All apps",
     loading: "Loading catalog…",
+    empty: "No matching apps.",
+    all: "All",
+    get: "GET", free: "Free · your instance",
+    deploy: "Deploy with Claude", viewRepo: "View code", issues: "Support",
+    cloneOf: "clone of", by: "by",
+    catNames: { finance: "Finance", productivity: "Productivity", social: "Social", media: "Media", communication: "Communication", health: "Health", other: "Other" },
+    stDev: "Author", stCat: "Category", stLic: "License", stTime: "Deploy", stPlat: "Platforms", min: "min",
+    screenshots: "Screenshots",
+    about: "About",
+    need: "What you'll need",
+    needTools: "Tool", needAccount: "Account",
+    info: "Information",
+    infoRows: { version: "Version", published: "Published", updated: "Updated", backend: "Backend", auth: "Sign-in", repo: "Repository", license: "License" },
+    deployNote: "To deploy it with no coding: download the <a href='skill/clone-deployer.skill'>clone-deployer</a> skill, install it in Claude and ask “deploy this app: <repo link>”. You'll get your own instance with your own data.",
     howtoTitle: "How do I deploy an app? (no coding needed)",
     howtoSteps: [
       "Download the <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> skill and install it in Claude (drag the file into the chat or Settings → Capabilities).",
@@ -104,19 +217,29 @@ const I18N = {
     publishSteps: [
       "Install the <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> skill in Claude and ask it to generate your repo's <code>clonefest.json</code>.",
       "Commit the manifest at the root of your repository.",
-      "Open a PR adding your manifest to <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (see the <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guide</a>). CI validates it and we review before merging."
+      "Open a PR adding your manifest to <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (see the <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guide</a>)."
     ],
     footer: "Clone Marketplace — self-hosted clone apps. Independent projects, not affiliated with the original apps.",
-    contribute: "Publish your app",
-    viewRepo: "View code", deploy: "Deploy with Claude",
-    by: "by", published: "published", cloneOf: "clone of"
+    contribute: "Publish your app"
   }
 };
+
 let lang = localStorage.getItem("lang") || (navigator.language.startsWith("es") ? "es" : "en");
 let manifests = [];
+let activeCat = "all";
 
-function t(key) { return I18N[lang][key]; }
-function loc(obj) { return obj ? (obj[lang] || obj.en || "") : ""; }
+const t = k => I18N[lang][k];
+const loc = o => o ? (o[lang] || o.en || "") : "";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const rawBase = url => url.replace(/\/[^/]*$/, "/");
+const iconUrl = m => m.icon ? rawBase(m._url) + m.icon : null;
+const shotUrls = m => (m.screenshots || []).map(s => /^https?:/.test(s) ? s : rawBase(m._url) + s);
+
+function iconHtml(m, cls) {
+  const u = iconUrl(m);
+  return u ? `<img class="${cls||''}" src="${esc(u)}" alt="" onerror="this.outerHTML='<div class=&quot;app-icon-ph&quot;>${esc(m.name[0])}</div>'">`
+           : `<div class="app-icon-ph">${esc(m.name[0])}</div>`;
+}
 
 function setLang(l) {
   lang = l; localStorage.setItem("lang", l);
@@ -124,55 +247,125 @@ function setLang(l) {
   document.getElementById("btn-es").classList.toggle("active", l === "es");
   document.getElementById("btn-en").classList.toggle("active", l === "en");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
   document.getElementById("howtoSteps").innerHTML = I18N[l].howtoSteps.map(s => `<li>${s}</li>`).join("");
   document.getElementById("publishSteps").innerHTML = I18N[l].publishSteps.map(s => `<li>${s}</li>`).join("");
-  render();
+  renderCats(); render(); renderHero();
 }
 
-function rawBase(manifestUrl) { return manifestUrl.replace(/\/[^/]*$/, "/"); }
+function renderCats() {
+  const cats = [...new Set(manifests.map(m => m.category || "other"))];
+  const el = document.getElementById("cats");
+  if (cats.length < 2) { el.innerHTML = ""; return; }
+  el.innerHTML = [`<button class="cat ${activeCat==='all'?'active':''}" onclick="setCat('all')">${t("all")}</button>`,
+    ...cats.map(c => `<button class="cat ${activeCat===c?'active':''}" onclick="setCat('${esc(c)}')">${t("catNames")[c] || c}</button>`)].join("");
+}
+function setCat(c) { activeCat = c; renderCats(); render(); }
+
+function renderHero() {
+  const m = manifests[0];
+  if (!m) return;
+  document.getElementById("hero").hidden = false;
+  document.getElementById("heroCard").innerHTML = `
+    ${iconHtml(m)}
+    <div>
+      <h2>${esc(m.name)}</h2>
+      <p>${esc(loc(m.tagline) || loc(m.description))}</p>
+    </div>
+    <div class="get-wrap get" style="background:none;padding:0">
+      <button class="get primary">${t("get")}</button>
+      <span class="free-note" style="color:#fffc">${t("free")}</span>
+    </div>`;
+  document.getElementById("heroCard").onclick = () => openSheet(m.id);
+}
 
 function render() {
+  const q = (document.getElementById("q").value || "").toLowerCase();
   const el = document.getElementById("apps");
   if (!manifests.length) return;
-  el.innerHTML = manifests.map(m => `
-    <article class="card">
-      <div class="card-head">
-        ${m.icon ? `<img src="${rawBase(m._url)}${m.icon}" alt="" onerror="this.remove()">` : ""}
-        <div>
-          <h2>${m.name}</h2>
-          <div class="clone-of">${t("cloneOf")} ${m.clone_of}</div>
-        </div>
+  const list = manifests.filter(m =>
+    (activeCat === "all" || (m.category || "other") === activeCat) &&
+    (!q || (m.name + " " + m.clone_of + " " + loc(m.description)).toLowerCase().includes(q)));
+  el.innerHTML = list.length ? list.map(m => `
+    <div class="app-row" onclick="openSheet('${esc(m.id)}')">
+      ${iconHtml(m)}
+      <div class="info">
+        <h3>${esc(m.name)}</h3>
+        <div class="sub">${t("cloneOf")} ${esc(m.clone_of)}</div>
+        <div class="sub">${esc(loc(m.tagline))}</div>
       </div>
-      <p class="desc">${loc(m.description)}</p>
-      <div class="chips">
-        ${(m.platforms || []).map(p => `<span class="chip">${p}</span>`).join("")}
-        <span class="chip">${m.stack?.frontend?.framework || ""}</span>
-        <span class="chip">${m.stack?.backend?.provider || ""}</span>
+      <div>
+        <button class="get">${t("get")}</button>
+        <span class="free-note">${t("free")}</span>
       </div>
-      <div class="meta">
-        ${t("by")} <a href="https://github.com/${m.owner?.github}">@${m.owner?.github}</a>
-        · ${t("published")} ${m.published_at} · ${m.license}
+    </div>`).join("") : `<div class="empty">${t("empty")}</div>`;
+}
+
+function openSheet(id) {
+  const m = manifests.find(x => x.id === id);
+  if (!m) return;
+  const shots = shotUrls(m);
+  const tools = m.requirements?.tools || [];
+  const accounts = m.requirements?.accounts || [];
+  const ir = t("infoRows");
+  const info = [
+    [ir.version, m.version], [ir.published, m.published_at], [ir.updated, m.updated_at],
+    [ir.backend, m.stack?.backend?.provider], [ir.auth, (m.stack?.backend?.auth_providers || []).join(", ")],
+    [ir.license, m.license],
+    [ir.repo, `<a href="${esc(m.repo)}" target="_blank" rel="noopener">GitHub ↗</a>`]
+  ].filter(r => r[1]);
+  document.getElementById("sheet").innerHTML = `
+    <div class="sheet-head">
+      ${iconHtml(m)}
+      <div>
+        <h2>${esc(m.name)}</h2>
+        <div class="tag">${esc(loc(m.tagline) || (t("cloneOf") + " " + m.clone_of))}</div>
+        <div class="tag">${t("by")} <a href="https://github.com/${esc(m.owner?.github)}" target="_blank" rel="noopener">@${esc(m.owner?.github)}</a></div>
       </div>
       <div class="actions">
-        <a class="btn btn-repo" href="${m.repo}" target="_blank" rel="noopener">${t("viewRepo")}</a>
-        <a class="btn btn-deploy" href="skill/clone-deployer.skill" title="${t("deploy")}">${t("deploy")}</a>
+        <a class="get" style="display:inline-block" href="skill/clone-deployer.skill">${t("get")}</a>
+        <span class="free-note">${t("free")}</span>
       </div>
-    </article>`).join("");
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">${t("stDev")}</div><div class="v">@${esc(m.owner?.github)}</div></div>
+      <div class="stat"><div class="k">${t("stCat")}</div><div class="v">${t("catNames")[m.category] || esc(m.category || "—")}</div></div>
+      <div class="stat"><div class="k">${t("stLic")}</div><div class="v">${esc(m.license)}</div></div>
+      ${m.deploy?.estimated_minutes ? `<div class="stat"><div class="k">${t("stTime")}</div><div class="v">~${m.deploy.estimated_minutes}</div><div class="u">${t("min")}</div></div>` : ""}
+      <div class="stat"><div class="k">${t("stPlat")}</div><div class="v">${(m.platforms || []).length}</div><div class="u">${esc((m.platforms || []).join(" · "))}</div></div>
+    </div>
+    ${shots.length ? `<div class="shots">${shots.map(s => `<img src="${esc(s)}" alt="screenshot" loading="lazy">`).join("")}</div>` : ""}
+    <div class="sheet-body">
+      <h4>${t("about")}</h4>
+      <p>${esc(loc(m.description))}</p>
+      <h4>${t("need")}</h4>
+      <div class="need">
+        ${accounts.map(a => `<div><div class="nk">${t("needAccount")}${a.cost ? " · " + esc(a.cost) : ""}</div>${a.url ? `<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.name)}</a>` : esc(a.name)}</div>`).join("")}
+        ${tools.map(x => `<div><div class="nk">${t("needTools")}${x.min_version ? " · ≥" + esc(x.min_version) : ""}</div>${esc(x.name)}</div>`).join("")}
+      </div>
+      <h4>${t("info")}</h4>
+      <div class="infogrid">${info.map(r => `<div class="item"><span>${r[0]}</span><span>${r[1]}</span></div>`).join("")}</div>
+      <div class="deploy-note">${t("deployNote")}</div>
+    </div>`;
+  document.getElementById("overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
 }
+function closeSheet() {
+  document.getElementById("overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
 
 async function load() {
   try {
     const idx = await (await fetch("apps.json")).json();
     manifests = (await Promise.all(idx.apps.map(async a => {
-      try {
-        const m = await (await fetch(a.manifest)).json();
-        m._url = a.manifest;
-        return m;
-      } catch { return null; }
+      try { const m = await (await fetch(a.manifest)).json(); m._url = a.manifest; return m; }
+      catch { return null; }
     }))).filter(Boolean);
-    render();
+    renderHero(); renderCats(); render();
   } catch {
-    document.getElementById("apps").innerHTML = `<div class="error">Could not load catalog.</div>`;
+    document.getElementById("apps").innerHTML = `<div class="empty">Could not load catalog.</div>`;
   }
 }
 setLang(lang);

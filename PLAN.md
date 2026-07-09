@@ -14,7 +14,7 @@ Flujo del autor de una app: escribe `clonefest.json` → valida contra el schema
 
 ## Fases
 
-**Fase 1 — Fundación (esta semana).** Ya generado en `marketplace-kit/`: spec + schema, manifest real del clon de Splitwise, skill clone-deployer, landing bilingüe. Falta: crear repo `open-clone-marketplace`, subir contenido, activar GitHub Pages (Settings → Pages → branch main, carpeta `/` o `/docs`), commit del `clonefest.json` en el repo share.
+**Fase 1 — Fundación (esta semana).** Ya generado en `marketplace-kit/`: spec + schema, manifest real del clon de Split-style app, skill clone-deployer, landing bilingüe. Falta: crear repo `open-clone-marketplace`, subir contenido, activar GitHub Pages (Settings → Pages → branch main, carpeta `/` o `/docs`), commit del `clonefest.json` en el repo share.
 
 **Fase 2 — Validación end-to-end.** Probar el flujo completo con un usuario real no técnico: instalar la skill, desplegar Share en una cuenta Firebase limpia, medir dónde se atasca. Ajustar manifest y skill con lo aprendido. Añadir CI (GitHub Action con ajv) que valide manifests en PRs.
 

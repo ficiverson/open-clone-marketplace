@@ -79,4 +79,4 @@ Show the user the generated manifest, note anything you inferred with low confid
 
 ## Example output
 
-See a complete real manifest at https://raw.githubusercontent.com/ficiverson/share/main/clonefest.json (Flutter + Firebase Splitwise clone).
+See a complete real manifest at https://raw.githubusercontent.com/ficiverson/share/main/clonefest.json (Flutter + Firebase Split-style app clone).

@@ -2,7 +2,7 @@
 
 **English** · [Español](#español)
 
-A catalog of open-source clone apps (Splitwise-style, Trello-style…) that anyone can deploy on their own account — your data, your instance, no vendor.
+A catalog of open-source clone apps (Split-style app-style, Trello-style…) that anyone can deploy on their own account — your data, your instance, no vendor.
 
 **Live catalog:** https://ficiverson.github.io/open-clone-marketplace/
 
@@ -31,7 +31,7 @@ Apps listed here are independent open-source projects *inspired by* well-known a
 
 ## Español
 
-Catálogo de apps clónicas open source (estilo Splitwise, estilo Trello…) que cualquiera puede desplegar en su propia cuenta: tus datos, tu instancia, sin proveedor.
+Catálogo de apps clónicas open source (estilo Split-style app, estilo Trello…) que cualquiera puede desplegar en su propia cuenta: tus datos, tu instancia, sin proveedor.
 
 **Catálogo:** https://ficiverson.github.io/open-clone-marketplace/
 

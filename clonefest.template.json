@@ -3,7 +3,7 @@
   "clonefest": "1.0",
   "id": "your-app-id",
   "name": "Your App Name",
-  "clone_of": "Original app style (e.g. 'Splitwise-style expense splitting')",
+  "clone_of": "Original app style (e.g. 'Split-style app-style expense splitting')",
   "category": "finance | productivity | social | media | communication | health | other",
   "tagline": { "en": "One-line pitch.", "es": "Pitch en una línea." },
   "description": { "en": "What it does, platforms, backend, and that each deployment is independent.", "es": "Qué hace, plataformas, backend." },

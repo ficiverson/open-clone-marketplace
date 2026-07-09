@@ -9,7 +9,7 @@
 
 ## Trademarks and naming
 
-Your app must be an independent project *inspired by* the original — not pretend to be it. Use your own name and icon ("Share", not "Splitwise 2"), never the original's logo or assets, and describe it as "Splitwise-style" / "inspired by Splitwise". Apps violating this are removed.
+Your app must be an independent project *inspired by* the original — not pretend to be it. Use your own name and icon ("Share", not "Split-style app 2"), never the original's logo or assets, and describe it as "Split-style app-style" / "inspired by Split-style app". Apps violating this are removed.
 
 ## Steps
 
