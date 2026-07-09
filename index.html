@@ -91,6 +91,13 @@
   .infogrid .item span:first-child { color: var(--muted); }
   .deploy-note { background: var(--chip); border-radius: 12px; padding: 14px 16px; margin-top: 20px; font-size: .88rem; line-height: 1.5; color: var(--muted); }
 
+  /* Skill banner */
+  .skill-banner { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 1px solid var(--border);
+                  border-radius: 14px; padding: 14px 18px; margin: 22px 0 6px; box-shadow: var(--shadow); flex-wrap: wrap; }
+  .skill-banner .ico { font-size: 1.4rem; }
+  .skill-banner p { flex: 1; font-size: .88rem; color: var(--muted); line-height: 1.45; min-width: 200px; }
+  .skill-banner a.dl { background: var(--accent); color: #fff; font-weight: 600; font-size: .85rem; padding: 9px 18px; border-radius: 999px; flex-shrink: 0; }
+
   /* Publish strip */
   .strip { background: var(--surface); border-radius: 16px; padding: 24px; margin: 30px 0 40px; box-shadow: var(--shadow); }
   .strip h3 { font-size: 1.1rem; margin-bottom: 10px; }
@@ -124,6 +131,12 @@
     <div class="hero-label" data-i18n="featured"></div>
     <div class="hero-card" id="heroCard"></div>
   </section>
+
+  <div class="skill-banner">
+    <span class="ico">🧩</span>
+    <p data-i18n="skillBanner"></p>
+    <a class="dl" href="skill/clone-deployer.skill" data-i18n="skillBtn"></a>
+  </div>
 
   <div class="cats" id="cats"></div>
 
@@ -160,6 +173,9 @@ const I18N = {
     empty: "No hay apps que coincidan.",
     all: "Todas",
     get: "OBTENER", free: "Gratis · tu instancia",
+    promptPrefix: "Despliega esta app en mi propia cuenta usando la skill clone-deployer: ",
+    skillBanner: "¿Primera vez? Instala la skill <strong>clone-deployer</strong> en Claude (solo una vez): descárgala y arrástrala al chat o añádela en Ajustes → Capacidades. Después, el botón OBTENER abre Claude con todo listo.",
+    skillBtn: "Descargar skill",
     deploy: "Desplegar con Claude", viewRepo: "Ver código", issues: "Soporte",
     cloneOf: "clon de", by: "por",
     catNames: { finance: "Finanzas", productivity: "Productividad", social: "Social", media: "Media", communication: "Comunicación", health: "Salud", other: "Otras" },
@@ -170,7 +186,7 @@ const I18N = {
     needTools: "Herramienta", needAccount: "Cuenta",
     info: "Información",
     infoRows: { version: "Versión", published: "Publicada", updated: "Actualizada", backend: "Backend", auth: "Login", repo: "Repositorio", license: "Licencia" },
-    deployNote: "Para desplegarla sin saber programar: descarga la skill <a href='skill/clone-deployer.skill'>clone-deployer</a>, instálala en Claude y pídele «despliega esta app: <enlace del repo>». Tendrás tu propia instancia con tus datos.",
+    deployNote: "El botón OBTENER abre Claude con el prompt listo. Requiere tener instalada la skill <a href='skill/clone-deployer.skill'>clone-deployer</a> (una sola vez, sirve para todas las apps). Tendrás tu propia instancia con tus datos.",
     howtoTitle: "¿Cómo despliego una app? (sin saber programar)",
     howtoSteps: [
       "Descarga la skill <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> e instálala en Claude (arrastra el archivo al chat o Ajustes → Capacidades).",
@@ -195,6 +211,9 @@ const I18N = {
     empty: "No matching apps.",
     all: "All",
     get: "GET", free: "Free · your instance",
+    promptPrefix: "Deploy this app on my own account using the clone-deployer skill: ",
+    skillBanner: "First time here? Install the <strong>clone-deployer</strong> skill in Claude (once): download it and drag it into the chat, or add it in Settings → Capabilities. After that, the GET button opens Claude ready to go.",
+    skillBtn: "Download skill",
     deploy: "Deploy with Claude", viewRepo: "View code", issues: "Support",
     cloneOf: "clone of", by: "by",
     catNames: { finance: "Finance", productivity: "Productivity", social: "Social", media: "Media", communication: "Communication", health: "Health", other: "Other" },
@@ -205,7 +224,7 @@ const I18N = {
     needTools: "Tool", needAccount: "Account",
     info: "Information",
     infoRows: { version: "Version", published: "Published", updated: "Updated", backend: "Backend", auth: "Sign-in", repo: "Repository", license: "License" },
-    deployNote: "To deploy it with no coding: download the <a href='skill/clone-deployer.skill'>clone-deployer</a> skill, install it in Claude and ask “deploy this app: <repo link>”. You'll get your own instance with your own data.",
+    deployNote: "The GET button opens Claude with the prompt ready. It requires the <a href='skill/clone-deployer.skill'>clone-deployer</a> skill installed (once — it works for every app). You'll get your own instance with your own data.",
     howtoTitle: "How do I deploy an app? (no coding needed)",
     howtoSteps: [
       "Download the <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> skill and install it in Claude (drag the file into the chat or Settings → Capabilities).",
@@ -232,6 +251,7 @@ const t = k => I18N[lang][k];
 const loc = o => o ? (o[lang] || o.en || "") : "";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 const rawBase = url => url.replace(/\/[^/]*$/, "/");
+const claudeUrl = m => "https://claude.ai/new?q=" + encodeURIComponent(t("promptPrefix") + m.repo);
 const iconUrl = m => m.icon ? rawBase(m._url) + m.icon : null;
 const shotUrls = m => (m.screenshots || []).map(s => /^https?:/.test(s) ? s : rawBase(m._url) + s);
 
@@ -273,7 +293,7 @@ function renderHero() {
       <p>${esc(loc(m.tagline) || loc(m.description))}</p>
     </div>
     <div class="get-wrap get" style="background:none;padding:0">
-      <button class="get primary">${t("get")}</button>
+      <a class="get primary" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t("get")}</a>
       <span class="free-note" style="color:#fffc">${t("free")}</span>
     </div>`;
   document.getElementById("heroCard").onclick = () => openSheet(m.id);
@@ -295,7 +315,7 @@ function render() {
         <div class="sub">${esc(loc(m.tagline))}</div>
       </div>
       <div>
-        <button class="get">${t("get")}</button>
+        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t("get")}</a>
         <span class="free-note">${t("free")}</span>
       </div>
     </div>`).join("") : `<div class="empty">${t("empty")}</div>`;
@@ -323,7 +343,7 @@ function openSheet(id) {
         <div class="tag">${t("by")} <a href="https://github.com/${esc(m.owner?.github)}" target="_blank" rel="noopener">@${esc(m.owner?.github)}</a></div>
       </div>
       <div class="actions">
-        <a class="get" style="display:inline-block" href="skill/clone-deployer.skill">${t("get")}</a>
+        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener">${t("get")}</a>
         <span class="free-note">${t("free")}</span>
       </div>
     </div>
