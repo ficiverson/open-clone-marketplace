@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ficiverson.github.io/open-clone-marketplace/spec/clonefest.schema.json",
+  "title": "Clonefest manifest v1.0",
+  "description": "Manifest that describes a clone app so the marketplace catalog can list it and the clone-deployer skill can deploy it.",
+  "type": "object",
+  "required": ["clonefest", "id", "name", "clone_of", "description", "owner", "repo", "license", "published_at", "platforms", "stack", "requirements", "deploy"],
+  "properties": {
+    "clonefest": { "type": "string", "enum": ["1.0"], "description": "Spec version" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Unique slug in the catalog" },
+    "name": { "type": "string" },
+    "clone_of": { "type": "string", "description": "Original app this project clones (e.g. Splitwise, Trello)" },
+    "category": { "type": "string", "enum": ["finance", "productivity", "social", "media", "communication", "health", "other"] },
+    "tagline": { "$ref": "#/$defs/i18nText" },
+    "description": { "$ref": "#/$defs/i18nText" },
+    "owner": {
+      "type": "object",
+      "required": ["name", "github"],
+      "properties": {
+        "name": { "type": "string" },
+        "github": { "type": "string" },
+        "email": { "type": "string", "format": "email" }
+      }
+    },
+    "repo": { "type": "string", "format": "uri" },
+    "license": { "type": "string" },
+    "version": { "type": "string" },
+    "published_at": { "type": "string", "format": "date" },
+    "updated_at": { "type": "string", "format": "date" },
+    "icon": { "type": "string", "description": "Path relative to repo root" },
+    "screenshots": { "type": "array", "items": { "type": "string" } },
+    "platforms": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "enum": ["web", "android", "ios", "macos", "windows", "linux"] }
+    },
+    "stack": {
+      "type": "object",
+      "required": ["frontend", "backend"],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "required": ["framework"],
+          "properties": {
+            "framework": { "type": "string" },
+            "language": { "type": "string" },
+            "min_version": { "type": "string" }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "required": ["provider"],
+          "properties": {
+            "provider": { "type": "string", "description": "firebase, supabase, none, custom..." },
+            "services": { "type": "array", "items": { "type": "string" } },
+            "auth_providers": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "min_version": { "type": "string" },
+              "install": { "type": "string" }
+            }
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string", "format": "uri" },
+              "cost": { "type": "string" }
+            }
+          }
+        },
+        "platform_extras": { "type": "object", "additionalProperties": { "type": "array", "items": { "type": "string" } } }
+      }
+    },
+    "deploy": {
+      "type": "object",
+      "required": ["target", "steps"],
+      "properties": {
+        "target": { "type": "string" },
+        "estimated_minutes": { "type": "integer" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "title"],
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string", "enum": ["shell", "manual"], "description": "shell = command the skill can run; manual = action the user does in a console/browser" },
+              "run": { "type": "string", "description": "Command for shell steps" },
+              "url": { "type": "string", "format": "uri" },
+              "doc": { "type": "string", "description": "Repo-relative doc anchor with details" },
+              "optional": { "type": "boolean", "default": false },
+              "title": { "$ref": "#/$defs/i18nText" }
+            }
+          }
+        },
+        "verify": { "$ref": "#/$defs/i18nText" }
+      }
+    },
+    "docs": { "type": "object", "additionalProperties": { "type": "string" } },
+    "support": { "type": "object", "additionalProperties": { "type": "string" } }
+  },
+  "$defs": {
+    "i18nText": {
+      "type": "object",
+      "required": ["en"],
+      "properties": { "en": { "type": "string" }, "es": { "type": "string" } },
+      "description": "Localized text. English required, Spanish optional."
+    }
+  }
+}

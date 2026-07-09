@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clone Marketplace</title>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d27; --text: #e8eaf0; --muted: #9aa0b0;
+    --accent: #5b8cff; --accent2: #7c5bff; --border: #2a2e3d; --chip: #242837;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  header { max-width: 1000px; margin: 0 auto; padding: 48px 24px 8px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  h1 { font-size: 2rem; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .subtitle { color: var(--muted); margin-top: 8px; max-width: 560px; line-height: 1.5; }
+  .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .lang-toggle button { background: none; border: none; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: .9rem; }
+  .lang-toggle button.active { background: var(--accent); color: #fff; }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+  .card-head { display: flex; align-items: center; gap: 12px; }
+  .card-head img { width: 44px; height: 44px; border-radius: 10px; background: var(--chip); }
+  .card h2 { font-size: 1.2rem; }
+  .clone-of { color: var(--muted); font-size: .85rem; }
+  .desc { color: var(--muted); font-size: .92rem; line-height: 1.5; flex: 1; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { background: var(--chip); border-radius: 999px; padding: 3px 10px; font-size: .75rem; color: var(--muted); }
+  .meta { font-size: .78rem; color: var(--muted); }
+  .meta a { color: var(--accent); text-decoration: none; }
+  .actions { display: flex; gap: 10px; margin-top: 4px; }
+  .btn { flex: 1; text-align: center; padding: 10px 12px; border-radius: 9px; font-size: .88rem; text-decoration: none; font-weight: 600; }
+  .btn-repo { border: 1px solid var(--border); color: var(--text); }
+  .btn-deploy { background: linear-gradient(90deg, var(--accent), var(--accent2)); color: #fff; }
+  .howto { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin: 36px 0; }
+  .howto h3 { margin-bottom: 12px; }
+  .howto ol { margin-left: 20px; color: var(--muted); line-height: 1.9; }
+  .howto code { background: var(--chip); padding: 2px 6px; border-radius: 5px; font-size: .85em; }
+  footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 24px; }
+  footer a { color: var(--accent); }
+  .loading, .error { color: var(--muted); padding: 40px; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Clone Marketplace</h1>
+    <p class="subtitle" data-i18n="subtitle"></p>
+  </div>
+  <div class="lang-toggle">
+    <button id="btn-es" onclick="setLang('es')">ES</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+<main>
+  <div id="apps" class="grid"><div class="loading" data-i18n="loading"></div></div>
+  <section class="howto">
+    <h3 data-i18n="howtoTitle"></h3>
+    <ol id="howtoSteps"></ol>
+  </section>
+  <section class="howto">
+    <h3 data-i18n="publishTitle"></h3>
+    <ol id="publishSteps"></ol>
+  </section>
+</main>
+<footer>
+  <span data-i18n="footer"></span> · <a href="https://github.com/ficiverson/open-clone-marketplace" data-i18n="contribute"></a>
+</footer>
+<script>
+const I18N = {
+  es: {
+    subtitle: "Apps clónicas open source que despliegas en tu propia cuenta. Tus datos, tu instancia, gratis.",
+    loading: "Cargando catálogo…",
+    howtoTitle: "¿Cómo despliego una app? (sin saber programar)",
+    howtoSteps: [
+      "Descarga la skill <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> e instálala en Claude (arrastra el archivo al chat o Ajustes → Capacidades).",
+      "Elige una app del catálogo y copia el enlace de su repositorio.",
+      "Pídele a Claude: <em>“despliega esta app: &lt;enlace&gt;”</em>.",
+      "Claude lee el manifest de la app y te guía paso a paso hasta que está online."
+    ],
+    publishTitle: "¿Tienes una app clónica? Publícala",
+    publishSteps: [
+      "Instala la skill <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> en Claude y pídele que genere el <code>clonefest.json</code> de tu repo.",
+      "Haz commit del manifest en la raíz de tu repositorio.",
+      "Abre un PR añadiendo tu manifest a <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (ver <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guía</a>). La CI lo valida y lo revisamos antes del merge."
+    ],
+    footer: "Clone Marketplace — apps clónicas autoalojadas. Proyectos independientes sin afiliación con las apps originales.",
+    contribute: "Publica tu app",
+    viewRepo: "Ver código", deploy: "Desplegar con Claude",
+    by: "por", published: "publicado", cloneOf: "clon de"
+  },
+  en: {
+    subtitle: "Open-source clone apps you deploy on your own account. Your data, your instance, free.",
+    loading: "Loading catalog…",
+    howtoTitle: "How do I deploy an app? (no coding needed)",
+    howtoSteps: [
+      "Download the <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> skill and install it in Claude (drag the file into the chat or Settings → Capabilities).",
+      "Pick an app from the catalog and copy its repository link.",
+      "Ask Claude: <em>“deploy this app: &lt;link&gt;”</em>.",
+      "Claude reads the app's manifest and guides you step by step until it's live."
+    ],
+    publishTitle: "Built a clone app? Publish it",
+    publishSteps: [
+      "Install the <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> skill in Claude and ask it to generate your repo's <code>clonefest.json</code>.",
+      "Commit the manifest at the root of your repository.",
+      "Open a PR adding your manifest to <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (see the <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guide</a>). CI validates it and we review before merging."
+    ],
+    footer: "Clone Marketplace — self-hosted clone apps. Independent projects, not affiliated with the original apps.",
+    contribute: "Publish your app",
+    viewRepo: "View code", deploy: "Deploy with Claude",
+    by: "by", published: "published", cloneOf: "clone of"
+  }
+};
+let lang = localStorage.getItem("lang") || (navigator.language.startsWith("es") ? "es" : "en");
+let manifests = [];
+
+function t(key) { return I18N[lang][key]; }
+function loc(obj) { return obj ? (obj[lang] || obj.en || "") : ""; }
+
+function setLang(l) {
+  lang = l; localStorage.setItem("lang", l);
+  document.documentElement.lang = l;
+  document.getElementById("btn-es").classList.toggle("active", l === "es");
+  document.getElementById("btn-en").classList.toggle("active", l === "en");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
+  document.getElementById("howtoSteps").innerHTML = I18N[l].howtoSteps.map(s => `<li>${s}</li>`).join("");
+  document.getElementById("publishSteps").innerHTML = I18N[l].publishSteps.map(s => `<li>${s}</li>`).join("");
+  render();
+}
+
+function rawBase(manifestUrl) { return manifestUrl.replace(/\/[^/]*$/, "/"); }
+
+function render() {
+  const el = document.getElementById("apps");
+  if (!manifests.length) return;
+  el.innerHTML = manifests.map(m => `
+    <article class="card">
+      <div class="card-head">
+        ${m.icon ? `<img src="${rawBase(m._url)}${m.icon}" alt="" onerror="this.remove()">` : ""}
+        <div>
+          <h2>${m.name}</h2>
+          <div class="clone-of">${t("cloneOf")} ${m.clone_of}</div>
+        </div>
+      </div>
+      <p class="desc">${loc(m.description)}</p>
+      <div class="chips">
+        ${(m.platforms || []).map(p => `<span class="chip">${p}</span>`).join("")}
+        <span class="chip">${m.stack?.frontend?.framework || ""}</span>
+        <span class="chip">${m.stack?.backend?.provider || ""}</span>
+      </div>
+      <div class="meta">
+        ${t("by")} <a href="https://github.com/${m.owner?.github}">@${m.owner?.github}</a>
+        · ${t("published")} ${m.published_at} · ${m.license}
+      </div>
+      <div class="actions">
+        <a class="btn btn-repo" href="${m.repo}" target="_blank" rel="noopener">${t("viewRepo")}</a>
+        <a class="btn btn-deploy" href="skill/clone-deployer.skill" title="${t("deploy")}">${t("deploy")}</a>
+      </div>
+    </article>`).join("");
+}
+
+async function load() {
+  try {
+    const idx = await (await fetch("apps.json")).json();
+    manifests = (await Promise.all(idx.apps.map(async a => {
+      try {
+        const m = await (await fetch(a.manifest)).json();
+        m._url = a.manifest;
+        return m;
+      } catch { return null; }
+    }))).filter(Boolean);
+    render();
+  } catch {
+    document.getElementById("apps").innerHTML = `<div class="error">Could not load catalog.</div>`;
+  }
+}
+setLang(lang);
+load();
+</script>
+</body>
+</html>

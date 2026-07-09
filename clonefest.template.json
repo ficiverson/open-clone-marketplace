@@ -1,0 +1,38 @@
+{
+  "$schema": "https://ficiverson.github.io/open-clone-marketplace/spec/clonefest.schema.json",
+  "clonefest": "1.0",
+  "id": "your-app-id",
+  "name": "Your App Name",
+  "clone_of": "Original app style (e.g. 'Splitwise-style expense splitting')",
+  "category": "finance | productivity | social | media | communication | health | other",
+  "tagline": { "en": "One-line pitch.", "es": "Pitch en una línea." },
+  "description": { "en": "What it does, platforms, backend, and that each deployment is independent.", "es": "Qué hace, plataformas, backend." },
+  "owner": { "name": "Your Name", "github": "your-github-user", "email": "you@example.com" },
+  "repo": "https://github.com/<owner>/<repo>",
+  "license": "MIT",
+  "version": "0.1.0",
+  "published_at": "2026-01-01",
+  "updated_at": "2026-01-01",
+  "icon": "icon.png",
+  "screenshots": [],
+  "platforms": ["web"],
+  "stack": {
+    "frontend": { "framework": "flutter | react | ...", "language": "dart | ts | ...", "min_version": "x.y" },
+    "backend": { "provider": "firebase | supabase | none", "services": ["auth", "firestore"], "auth_providers": ["email_password"] }
+  },
+  "requirements": {
+    "tools": [{ "name": "tool-name", "min_version": "x.y", "install": "URL or install command" }],
+    "accounts": [{ "name": "Provider", "url": "https://...", "cost": "free tier" }]
+  },
+  "deploy": {
+    "target": "firebase-hosting | vercel | ...",
+    "estimated_minutes": 30,
+    "steps": [
+      { "id": "clone", "type": "shell", "run": "git clone <repo-url> && cd <repo>", "title": { "en": "Clone the repository", "es": "Clona el repositorio" } },
+      { "id": "console-setup", "type": "manual", "url": "https://console...", "doc": "README.md#setup", "title": { "en": "Create your backend project", "es": "Crea tu proyecto de backend" } }
+    ],
+    "verify": { "en": "Open <url> and check X works.", "es": "Abre <url> y comprueba que X funciona." }
+  },
+  "docs": { "readme": "README.md" },
+  "support": { "issues": "https://github.com/<owner>/<repo>/issues" }
+}

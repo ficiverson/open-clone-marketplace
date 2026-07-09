@@ -1,0 +1,61 @@
+name: Validate manifests
+
+on:
+  pull_request:
+    paths: ["apps.json", "spec/**"]
+  push:
+    branches: [main]
+    paths: ["apps.json", "spec/**"]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install validators
+        run: npm i -g ajv-cli ajv-formats
+
+      - name: Fetch and validate every manifest
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/manifests
+          for url in $(jq -r '.apps[].manifest' apps.json); do
+            id=$(basename $(dirname $(dirname "$url")))
+            echo "── Fetching $url"
+            curl -fsSL "$url" -o "/tmp/manifests/$id.json"
+            ajv validate -s spec/clonefest.schema.json -d "/tmp/manifests/$id.json" --spec=draft2020 -c ajv-formats
+          done
+
+      - name: Check ids are unique and match manifests
+        run: |
+          set -euo pipefail
+          dupes=$(jq -r '.apps[].id' apps.json | sort | uniq -d)
+          if [ -n "$dupes" ]; then echo "Duplicate ids: $dupes"; exit 1; fi
+
+      - name: Lint deploy steps for dangerous commands
+        run: |
+          set -euo pipefail
+          status=0
+          for f in /tmp/manifests/*.json; do
+            cmds=$(jq -r '.deploy.steps[] | select(.type=="shell") | .run' "$f")
+            while IFS= read -r cmd; do
+              [ -z "$cmd" ] && continue
+              if echo "$cmd" | grep -qE '(curl|wget)[^|]*\|\s*(ba|z|da)?sh|sudo |rm\s+-rf\s+[/~]|chmod\s+\+x|>\s*/etc/|base64\s+(-d|--decode)'; then
+                echo "::error file=$f::Dangerous command in deploy step: $cmd"
+                status=1
+              fi
+            done <<< "$cmds"
+          done
+          exit $status
+
+      - name: Warn on unpinned manifest URLs
+        run: |
+          unpinned=$(jq -r '.apps[].manifest' apps.json | grep -E '/(main|master)/' || true)
+          if [ -n "$unpinned" ]; then
+            echo "::warning::Manifest URLs not pinned to a commit SHA:"; echo "$unpinned"
+          fi

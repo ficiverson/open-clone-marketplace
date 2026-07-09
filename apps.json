@@ -1,0 +1,8 @@
+{
+  "apps": [
+    {
+      "id": "share",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/share/main/clonefest.json"
+    }
+  ]
+}
