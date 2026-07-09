@@ -2,7 +2,7 @@
   "apps": [
     {
       "id": "share",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/share/main/clonefest.json"
+      "manifest": "https://raw.githubusercontent.com/ficiverson/share/6040a377e6950195cd31bb0ac73215d0499b3ba0/clonefest.json"
     }
   ]
 }
