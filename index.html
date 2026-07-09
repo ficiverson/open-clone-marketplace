@@ -97,6 +97,8 @@
   .skill-banner .ico { font-size: 1.4rem; }
   .skill-banner p { flex: 1; font-size: .88rem; color: var(--muted); line-height: 1.45; min-width: 200px; }
   .skill-banner a.dl { background: var(--accent); color: #fff; font-weight: 600; font-size: .85rem; padding: 9px 18px; border-radius: 999px; flex-shrink: 0; }
+  .skill-banner .dismiss { background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; padding: 4px 8px; flex-shrink: 0; }
+  .skill-banner[hidden] { display: none; }
 
   /* Publish strip */
   .strip { background: var(--surface); border-radius: 16px; padding: 24px; margin: 30px 0 40px; box-shadow: var(--shadow); }
@@ -132,10 +134,11 @@
     <div class="hero-card" id="heroCard"></div>
   </section>
 
-  <div class="skill-banner">
+  <div class="skill-banner" id="skillBanner">
     <span class="ico">🧩</span>
     <p data-i18n="skillBanner"></p>
-    <a class="dl" href="skill/clone-deployer.skill" data-i18n="skillBtn"></a>
+    <a class="dl" href="skill/clone-deployer.skill" data-i18n="skillBtn" onclick="dismissBanner()"></a>
+    <button class="dismiss" onclick="dismissBanner()" aria-label="Close" title="Cerrar / Close">✕</button>
   </div>
 
   <div class="cats" id="cats"></div>
@@ -252,6 +255,12 @@ const loc = o => o ? (o[lang] || o.en || "") : "";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 const rawBase = url => url.replace(/\/[^/]*$/, "/");
 const claudeUrl = m => "https://claude.ai/new?q=" + encodeURIComponent(t("promptPrefix") + m.repo);
+
+function dismissBanner() {
+  localStorage.setItem("skillBannerDismissed", "1");
+  document.getElementById("skillBanner").hidden = true;
+}
+if (localStorage.getItem("skillBannerDismissed")) document.getElementById("skillBanner").hidden = true;
 const iconUrl = m => m.icon ? rawBase(m._url) + m.icon : null;
 const shotUrls = m => (m.screenshots || []).map(s => /^https?:/.test(s) ? s : rawBase(m._url) + s);
 
