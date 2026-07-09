@@ -254,7 +254,21 @@ const t = k => I18N[lang][k];
 const loc = o => o ? (o[lang] || o.en || "") : "";
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 const rawBase = url => url.replace(/\/[^/]*$/, "/");
-const claudeUrl = m => "https://claude.ai/new?q=" + encodeURIComponent(t("promptPrefix") + m.repo);
+const claudeQ = m => encodeURIComponent(t("promptPrefix") + m.repo);
+const claudeUrl = m => "https://claude.ai/new?q=" + claudeQ(m);
+
+function openClaude(e, id) {
+  e.preventDefault(); e.stopPropagation();
+  const m = manifests.find(x => x.id === id);
+  if (!m) return;
+  // Try the desktop app first; fall back to the web if it doesn't take focus.
+  const fallback = setTimeout(() => window.open(claudeUrl(m), "_blank", "noopener"), 1500);
+  const cancel = () => { clearTimeout(fallback); window.removeEventListener("blur", cancel); document.removeEventListener("visibilitychange", onVis); };
+  const onVis = () => { if (document.hidden) cancel(); };
+  window.addEventListener("blur", cancel);
+  document.addEventListener("visibilitychange", onVis);
+  location.href = "claude://claude.ai/new?q=" + claudeQ(m);
+}
 
 function dismissBanner() {
   localStorage.setItem("skillBannerDismissed", "1");
@@ -302,7 +316,7 @@ function renderHero() {
       <p>${esc(loc(m.tagline) || loc(m.description))}</p>
     </div>
     <div class="get-wrap get" style="background:none;padding:0">
-      <a class="get primary" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t("get")}</a>
+      <a class="get primary" style="display:inline-block" href="${claudeUrl(m)}" onclick="openClaude(event,'${esc(m.id)}')">${t("get")}</a>
       <span class="free-note" style="color:#fffc">${t("free")}</span>
     </div>`;
   document.getElementById("heroCard").onclick = () => openSheet(m.id);
@@ -324,7 +338,7 @@ function render() {
         <div class="sub">${esc(loc(m.tagline))}</div>
       </div>
       <div>
-        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${t("get")}</a>
+        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" onclick="openClaude(event,'${esc(m.id)}')">${t("get")}</a>
         <span class="free-note">${t("free")}</span>
       </div>
     </div>`).join("") : `<div class="empty">${t("empty")}</div>`;
@@ -352,7 +366,7 @@ function openSheet(id) {
         <div class="tag">${t("by")} <a href="https://github.com/${esc(m.owner?.github)}" target="_blank" rel="noopener">@${esc(m.owner?.github)}</a></div>
       </div>
       <div class="actions">
-        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" target="_blank" rel="noopener">${t("get")}</a>
+        <a class="get" style="display:inline-block" href="${claudeUrl(m)}" onclick="openClaude(event,'${esc(m.id)}')">${t("get")}</a>
         <span class="free-note">${t("free")}</span>
       </div>
     </div>
