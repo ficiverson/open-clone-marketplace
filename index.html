@@ -344,9 +344,12 @@ function render() {
     </div>`).join("") : `<div class="empty">${t("empty")}</div>`;
 }
 
-function openSheet(id) {
+const hashApp = () => location.hash.startsWith("#app/") ? decodeURIComponent(location.hash.slice(5)) : null;
+
+function openSheet(id, fromHistory) {
   const m = manifests.find(x => x.id === id);
   if (!m) return;
+  if (!fromHistory && hashApp() !== id) history.pushState({ app: id }, "", "#app/" + encodeURIComponent(id));
   const shots = shotUrls(m);
   const tools = m.requirements?.tools || [];
   const accounts = m.requirements?.accounts || [];
@@ -393,20 +396,32 @@ function openSheet(id) {
   document.getElementById("overlay").classList.add("open");
   document.body.style.overflow = "hidden";
 }
-function closeSheet() {
+function closeSheet(fromHistory) {
   document.getElementById("overlay").classList.remove("open");
   document.body.style.overflow = "";
+  if (!fromHistory && hashApp()) history.pushState(null, "", location.pathname + location.search);
 }
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+window.addEventListener("popstate", () => {
+  const id = hashApp();
+  if (id) openSheet(id, true); else closeSheet(true);
+});
 
 async function load() {
   try {
     const idx = await (await fetch("apps.json")).json();
     manifests = (await Promise.all(idx.apps.map(async a => {
-      try { const m = await (await fetch(a.manifest)).json(); m._url = a.manifest; return m; }
-      catch { return null; }
+      // Same-origin cache first (refreshed by CI); raw GitHub as fallback.
+      let m = null;
+      for (const url of [`cache/${a.id}.json`, a.manifest]) {
+        try { const r = await fetch(url); if (r.ok) { m = await r.json(); break; } } catch {}
+      }
+      if (m) m._url = a.manifest; // icons/screenshots resolve against the app repo
+      return m;
     }))).filter(Boolean);
     renderHero(); renderCats(); render();
+    const deep = hashApp();
+    if (deep) openSheet(deep, true);
   } catch {
     document.getElementById("apps").innerHTML = `<div class="empty">Could not load catalog.</div>`;
   }

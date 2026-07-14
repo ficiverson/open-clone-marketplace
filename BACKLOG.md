@@ -12,7 +12,7 @@ Prioridad: P0 = imprescindible para lanzar · P1 = primera iteración · P2 = de
 
 ## P0.5 — Seguridad y confianza (antes de aceptar apps de terceros)
 
-- [ ] **MKT-18** Política de seguridad de manifests: clone-deployer ejecuta los comandos `shell` del manifest, así que todo manifest de terceros se revisa a mano antes del merge + CI que lintea comandos peligrosos (`curl|sh`, `sudo`, `rm -rf`, escritura fuera del repo, descargas de binarios).
+- [x] **MKT-18** Política de seguridad de manifests: clone-deployer ejecuta los comandos `shell` del manifest, así que todo manifest de terceros se revisa a mano antes del merge + CI que lintea comandos peligrosos (`curl|sh`, `sudo`, `rm -rf`, escritura fuera del repo, descargas de binarios).
 - [x] **MKT-19** Pinear manifests: en `apps.json` referenciar commit SHA en vez de `main` (o cachear copia en el repo del catálogo) para que un manifest no pueda cambiar después de revisado. La actualización requiere nuevo PR.
 - [x] **MKT-20** Guía legal/marcas en CONTRIBUTING: nombre propio distinto al original ("inspired by Split-style app", nunca "Split-style app clone oficial"), prohibido usar logos/assets/nombre de la app original, licencia OSI obligatoria, disclaimer en la landing de no afiliación.
 
@@ -23,7 +23,7 @@ Prioridad: P0 = imprescindible para lanzar · P1 = primera iteración · P2 = de
 - [x] **MKT-8** Buscador y filtros en la landing (categoría, plataforma, stack).
 - [x] **MKT-9** Sección "requisitos" visible en cada ficha (cuentas necesarias y coste) antes de que el usuario se lance.
 - [ ] **MKT-10** Mejorar la skill con lo aprendido en MKT-5 (errores típicos de flutterfire/firebase login, detección de versión de Flutter).
-- [ ] **MKT-11** Añadir screenshots del clon de Share al manifest y a la ficha.
+- [x] **MKT-11** Añadir screenshots del clon de Share al manifest y a la ficha.
 - [x] **MKT-21** Sección "Publica tu app" en la landing: enlaza la skill `clonefest-generator` (descargable como clone-deployer) + los 3 pasos de autor (generar manifest → validar → PR a apps.json).
 - [x] **MKT-22** Colocar `clonefest-generator.skill` junto a `clone-deployer.skill` en `catalog/skill/` del repo marketplace.
 
@@ -31,10 +31,10 @@ Prioridad: P0 = imprescindible para lanzar · P1 = primera iteración · P2 = de
 
 - [ ] **MKT-12** Segunda app clónica (idealmente stack distinto, ej. Supabase o backend-less) para validar que la spec generaliza.
 - [ ] **MKT-13** Badge "verified": Action programada que despliega cada app en un proyecto de prueba y marca las que funcionan.
-- [ ] **MKT-14** Cache de manifests: Action nocturna que copia los manifests al repo del catálogo (evita rate-limit de raw.githubusercontent.com).
+- [x] **MKT-14** Cache de manifests: Action nocturna que copia los manifests al repo del catálogo (evita rate-limit de raw.githubusercontent.com).
 - [ ] **MKT-15** Dominio propio (CNAME) y analytics ligeras (Plausible/GoatCounter).
 - [ ] **MKT-16** Spec v1.1: soporte multi-backend, variables de entorno declarativas, hooks post-deploy.
-- [ ] **MKT-17** Página de detalle por app (ficha ampliada con README embebido) en vez de solo cards.
+- [x] **MKT-17** Ficha de detalle por app (modal estilo App Store) con enlace directo compartible `#app/<id>`. README embebido: descartado por ahora.
 - [ ] **MKT-23** Flujo de actualización de instancias desplegadas: campo `changelog`/`min_redeploy_steps` en spec v1.1 y soporte en clone-deployer para "actualiza mi app" (git pull + rebuild + redeploy).
 - [x] **MKT-24** Licencia y README del propio repo open-clone-marketplace. (HECHO)
 

@@ -1,0 +1,42 @@
+name: Cache manifests
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["apps.json"]
+
+permissions:
+  contents: write
+
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch manifests into cache/
+        run: |
+          set -euo pipefail
+          mkdir -p cache
+          jq -c '.apps[]' apps.json | while read -r app; do
+            id=$(echo "$app" | jq -r '.id')
+            url=$(echo "$app" | jq -r '.manifest')
+            echo "── $id ← $url"
+            curl -fsSL "$url" -o "cache/$id.json"
+            jq empty "cache/$id.json"
+          done
+          # Drop cached manifests for apps removed from the index
+          for f in cache/*.json; do
+            id=$(basename "$f" .json)
+            jq -e --arg id "$id" '.apps[] | select(.id == $id)' apps.json > /dev/null || rm "$f"
+          done
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add cache/
+          git diff --cached --quiet || (git commit -m "chore: refresh manifest cache" && git push)
