@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Clone Marketplace</title>
 <style>
   :root {
@@ -71,7 +71,7 @@
   .sheet-head h2 { font-size: 1.5rem; letter-spacing: -.02em; }
   .sheet-head .tag { color: var(--muted); margin-top: 3px; font-size: .95rem; }
   .sheet-head .actions { margin-left: auto; text-align: center; }
-  .close { position: absolute; margin: 14px; right: max(16px, calc(50vw - 380px)); background: var(--chip); border: none; width: 30px; height: 30px; border-radius: 50%; color: var(--muted); font-size: 1rem; cursor: pointer; z-index: 51; }
+  .close { position: fixed; top: 14px; right: max(16px, calc(50vw - 380px)); background: var(--chip); border: none; width: 32px; height: 32px; border-radius: 50%; color: var(--muted); font-size: 1rem; cursor: pointer; z-index: 51; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
   .stats { display: flex; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0 28px; padding: 14px 0; }
   .stat { flex: 1; text-align: center; border-right: 1px solid var(--border); padding: 0 8px; }
   .stat:last-child { border-right: none; }
@@ -111,8 +111,33 @@
     .hero-card { flex-direction: column; text-align: center; padding: 26px 20px; }
     .hero-card .get { margin: 0 auto; }
     .infogrid { grid-template-columns: 1fr; }
-    .shots img { height: 300px; }
     .search { display: none; }
+
+    /* Full-screen sheet, like the iOS App Store */
+    .overlay { padding: 0; }
+    .sheet { border-radius: 0; margin-bottom: 0; min-height: 100dvh; }
+    .close { top: 12px; right: 12px; }
+    .sheet-head { flex-wrap: wrap; padding: 20px 16px 14px; gap: 14px; padding-top: max(20px, env(safe-area-inset-top)); }
+    .sheet-head img, .sheet-head .app-icon-ph { width: 76px; height: 76px; border-radius: 18px; }
+    .sheet-head h2 { font-size: 1.25rem; }
+    .sheet-head > div:nth-child(2) { flex: 1; min-width: 0; }
+    /* GET moves to its own row under the title, aligned with the text column */
+    .sheet-head .actions { flex-basis: 100%; margin: -6px 0 0 90px; text-align: left; }
+    .sheet-head .actions .free-note { display: inline-block; margin: 0 0 0 10px; vertical-align: middle; }
+
+    /* Stats become a horizontal scroller instead of squeezing 5 columns */
+    .stats { margin: 0 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .stats::-webkit-scrollbar { display: none; }
+    .stat { min-width: 96px; flex: 0 0 auto; }
+
+    .shots { padding: 16px 16px 4px; }
+    .shots img { height: 300px; }
+    .sheet-body { padding: 16px 16px calc(28px + env(safe-area-inset-bottom)); }
+    .skill-banner { position: relative; padding: 12px 14px; }
+    .skill-banner .dismiss { position: absolute; top: 6px; right: 6px; margin: 0; }
+    .skill-banner p { padding-right: 18px; }
+    .strip { padding: 18px 16px; }
+    .wrap { padding: 0 14px; }
   }
 </style>
 </head>
