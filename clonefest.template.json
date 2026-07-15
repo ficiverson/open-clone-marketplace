@@ -9,6 +9,7 @@
   "description": { "en": "What it does, platforms, backend, and that each deployment is independent.", "es": "Qué hace, plataformas, backend." },
   "owner": { "name": "Your Name", "github": "your-github-user", "email": "you@example.com" },
   "repo": "https://github.com/<owner>/<repo>",
+  "demo": "https://optional-live-demo.example.com (optional — remove if none)",
   "license": "MIT",
   "version": "0.1.0",
   "published_at": "2026-01-01",

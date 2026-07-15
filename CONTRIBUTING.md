@@ -18,7 +18,8 @@ Your app must be an independent project *inspired by* the original — not prete
 
    ```bash
    npm i -g ajv-cli ajv-formats
-   ajv validate -s spec/clonefest.schema.json -d clonefest.json --spec=draft2020 -c ajv-formats
+   curl -fsSLO https://ficiverson.github.io/open-clone-marketplace/spec/clonefest.schema.json
+   ajv validate -s clonefest.schema.json -d clonefest.json --spec=draft2020 -c ajv-formats
    ```
 
 3. Commit `clonefest.json` to your repo's default branch.

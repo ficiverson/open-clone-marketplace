@@ -24,14 +24,23 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p /tmp/manifests
-          for url in $(jq -r '.apps[].manifest' apps.json); do
-            id=$(basename $(dirname $(dirname "$url")))
-            echo "── Fetching $url"
+          jq -c '.apps[]' apps.json | while read -r app; do
+            id=$(echo "$app" | jq -r '.id')
+            url=$(echo "$app" | jq -r '.manifest')
+            echo "── $id ← $url"
+            case "$url" in
+              https://raw.githubusercontent.com/*) ;;
+              *) echo "::error::Manifest for '$id' must be hosted on raw.githubusercontent.com"; exit 1;;
+            esac
             curl -fsSL "$url" -o "/tmp/manifests/$id.json"
             ajv validate -s spec/clonefest.schema.json -d "/tmp/manifests/$id.json" --spec=draft2020 -c ajv-formats
+            mid=$(jq -r '.id' "/tmp/manifests/$id.json")
+            if [ "$mid" != "$id" ]; then
+              echo "::error::apps.json id '$id' does not match manifest id '$mid'"; exit 1
+            fi
           done
 
-      - name: Check ids are unique and match manifests
+      - name: Check ids are unique
         run: |
           set -euo pipefail
           dupes=$(jq -r '.apps[].id' apps.json | sort | uniq -d)

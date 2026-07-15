@@ -262,7 +262,7 @@ const I18N = {
     need: "Qué necesitas",
     needTools: "Herramienta", needAccount: "Cuenta",
     info: "Información",
-    infoRows: { version: "Versión", published: "Publicada", updated: "Actualizada", backend: "Backend", auth: "Login", repo: "Repositorio", license: "Licencia" },
+    infoRows: { version: "Versión", published: "Publicada", updated: "Actualizada", backend: "Backend", auth: "Login", repo: "Repositorio", license: "Licencia", demo: "Demo", demoTry: "Probar" },
     deployNote: "El botón OBTENER abre Claude con el prompt listo. Requiere tener instalada la skill <a href='skill/clone-deployer.skill'>clone-deployer</a> (una sola vez, sirve para todas las apps). Tendrás tu propia instancia con tus datos.",
     guideDeployTitle: "Consigue tu propia app",
     guideDeployDesc: "Guía paso a paso para desplegar cualquier app del catálogo sin saber programar.",
@@ -320,7 +320,7 @@ const I18N = {
     need: "What you'll need",
     needTools: "Tool", needAccount: "Account",
     info: "Information",
-    infoRows: { version: "Version", published: "Published", updated: "Updated", backend: "Backend", auth: "Sign-in", repo: "Repository", license: "License" },
+    infoRows: { version: "Version", published: "Published", updated: "Updated", backend: "Backend", auth: "Sign-in", repo: "Repository", license: "License", demo: "Demo", demoTry: "Try it" },
     deployNote: "The GET button opens Claude with the prompt ready. It requires the <a href='skill/clone-deployer.skill'>clone-deployer</a> skill installed (once — it works for every app). You'll get your own instance with your own data.",
     guideDeployTitle: "Get your own app",
     guideDeployDesc: "Step-by-step guide to deploy any catalog app, no coding needed.",
@@ -489,9 +489,17 @@ function render() {
   const q = (document.getElementById("q").value || "").toLowerCase();
   const el = document.getElementById("apps");
   if (!manifests.length) return;
-  const list = manifests.filter(m =>
-    (activeCat === "all" || (m.category || "other") === activeCat) &&
-    (!q || (m.name + " " + m.clone_of + " " + loc(m.description)).toLowerCase().includes(q)));
+  const list = manifests.filter(m => {
+    if (activeCat !== "all" && (m.category || "other") !== activeCat) return false;
+    if (!q) return true;
+    const hay = [
+      m.name, m.clone_of, m.category, loc(m.tagline), loc(m.description),
+      m.owner?.github, m.owner?.name,
+      m.stack?.frontend?.framework, m.stack?.backend?.provider,
+      ...(m.platforms || [])
+    ].filter(Boolean).join(" ").toLowerCase();
+    return q.split(/\s+/).every(term => hay.includes(term));
+  });
   el.innerHTML = list.length ? list.map(m => `
     <div class="app-row" onclick="openSheet('${esc(m.id)}')">
       ${iconHtml(m)}
@@ -521,8 +529,9 @@ function openSheet(id, fromHistory) {
     [ir.version, m.version], [ir.published, m.published_at], [ir.updated, m.updated_at],
     [ir.backend, m.stack?.backend?.provider], [ir.auth, (m.stack?.backend?.auth_providers || []).join(", ")],
     [ir.license, m.license],
-    [ir.repo, `<a href="${esc(m.repo)}" target="_blank" rel="noopener">GitHub ↗</a>`]
-  ].filter(r => r[1]);
+    [ir.repo, `<a href="${esc(m.repo)}" target="_blank" rel="noopener">GitHub ↗</a>`],
+    m.demo ? [ir.demo, `<a href="${esc(m.demo)}" target="_blank" rel="noopener">${ir.demoTry} ↗</a>`] : null
+  ].filter(r => r && r[1]);
   document.getElementById("sheet").innerHTML = `
     <div class="sheet-head">
       ${iconHtml(m)}

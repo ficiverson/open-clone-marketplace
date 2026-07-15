@@ -23,6 +23,7 @@
       }
     },
     "repo": { "type": "string", "format": "uri" },
+    "demo": { "type": "string", "format": "uri", "description": "Optional live demo URL so users can try the app before deploying" },
     "license": { "type": "string" },
     "version": { "type": "string" },
     "published_at": { "type": "string", "format": "date" },
