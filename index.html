@@ -100,10 +100,44 @@
   .skill-banner .dismiss { background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; padding: 4px 8px; flex-shrink: 0; }
   .skill-banner[hidden] { display: none; }
 
-  /* Publish strip */
-  .strip { background: var(--surface); border-radius: 16px; padding: 24px; margin: 30px 0 40px; box-shadow: var(--shadow); }
-  .strip h3 { font-size: 1.1rem; margin-bottom: 10px; }
-  .strip ol { margin-left: 20px; color: var(--muted); line-height: 1.9; font-size: .92rem; }
+  /* Guide link cards */
+  .guide-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 30px 0 40px; }
+  .guide-card { background: var(--surface); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); display: flex; gap: 14px; align-items: flex-start; color: var(--text); transition: transform .15s ease; }
+  .guide-card:hover { transform: translateY(-2px); }
+  .guide-card .gi { font-size: 1.6rem; }
+  .guide-card h3 { font-size: 1.02rem; margin-bottom: 4px; }
+  .guide-card p { color: var(--muted); font-size: .87rem; line-height: 1.5; }
+  .guide-card .arrow { margin-left: auto; color: var(--accent); font-weight: 700; align-self: center; }
+
+  /* Guide pages */
+  .page { padding: 26px 0 50px; max-width: 720px; }
+  .page .back { display: inline-block; margin-bottom: 18px; font-weight: 600; font-size: .92rem; }
+  .page h1 { font-size: 1.7rem; letter-spacing: -.02em; margin-bottom: 8px; }
+  .page .lead { color: var(--muted); line-height: 1.6; margin-bottom: 26px; }
+  .step { display: flex; gap: 16px; margin-bottom: 22px; }
+  .step .num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .95rem; }
+  .step h3 { font-size: 1.05rem; margin-bottom: 4px; }
+  .step p { color: var(--muted); line-height: 1.6; font-size: .93rem; }
+  .step .btn-inline { display: inline-block; margin-top: 8px; background: var(--accent); color: #fff; font-weight: 600; font-size: .85rem; padding: 8px 18px; border-radius: 999px; }
+  .callout { background: var(--surface); border-radius: 14px; padding: 16px 18px; margin: 26px 0; box-shadow: var(--shadow); font-size: .9rem; color: var(--muted); line-height: 1.6; }
+  .callout strong { color: var(--text); }
+
+  /* Onboarding */
+  .ob-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 60; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .ob-overlay.open { display: flex; }
+  .ob { background: var(--surface); border-radius: 22px; max-width: 440px; width: 100%; padding: 34px 30px 24px; box-shadow: 0 24px 60px rgba(0,0,0,.35); text-align: center; }
+  .ob .ob-ico { font-size: 2.6rem; }
+  .ob h2 { font-size: 1.3rem; letter-spacing: -.01em; margin: 14px 0 10px; }
+  .ob p { color: var(--muted); line-height: 1.6; font-size: .93rem; min-height: 88px; }
+  .ob .dots { display: flex; gap: 6px; justify-content: center; margin: 18px 0; }
+  .ob .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--chip); }
+  .ob .dot.on { background: var(--accent); }
+  .ob .ob-actions { display: flex; gap: 10px; }
+  .ob .ob-actions button { flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: .92rem; font-weight: 600; cursor: pointer; }
+  .ob .ob-next { background: var(--accent); color: #fff; }
+  .ob .ob-prev { background: var(--chip); color: var(--text); }
+  .ob .ob-skip { background: none; border: none; color: var(--muted); font-size: .82rem; margin-top: 12px; cursor: pointer; }
+  .help-btn { border: none; background: var(--chip); color: var(--muted); width: 30px; height: 30px; border-radius: 50%; font-weight: 700; cursor: pointer; flex-shrink: 0; }
   code { background: var(--chip); padding: 2px 6px; border-radius: 5px; font-size: .85em; }
   footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 26px 20px 40px; line-height: 1.6; }
   .loading, .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
@@ -146,6 +180,7 @@
   <div class="nav-inner">
     <span class="brand">Clone Marketplace</span>
     <div class="search"><input id="q" type="search" oninput="render()" data-i18n-ph="search"></div>
+    <button class="help-btn" onclick="startOnboarding()" title="Tutorial">?</button>
     <div class="lang-toggle">
       <button id="btn-es" onclick="setLang('es')">ES</button>
       <button id="btn-en" onclick="setLang('en')">EN</button>
@@ -154,6 +189,7 @@
 </nav>
 
 <div class="wrap">
+<div id="catalogView">
   <section class="hero" id="hero" hidden>
     <div class="hero-label" data-i18n="featured"></div>
     <div class="hero-card" id="heroCard"></div>
@@ -171,14 +207,24 @@
   <h2 class="section-title" data-i18n="allApps"></h2>
   <div class="grid" id="apps"><div class="loading" data-i18n="loading"></div></div>
 
-  <section class="strip">
-    <h3 data-i18n="howtoTitle"></h3>
-    <ol id="howtoSteps"></ol>
-  </section>
-  <section class="strip" style="margin-top:-14px">
-    <h3 data-i18n="publishTitle"></h3>
-    <ol id="publishSteps"></ol>
-  </section>
+  <div class="guide-cards">
+    <a class="guide-card" href="#deploy">
+      <span class="gi">📲</span>
+      <div><h3 data-i18n="guideDeployTitle"></h3><p data-i18n="guideDeployDesc"></p></div>
+      <span class="arrow">›</span>
+    </a>
+    <a class="guide-card" href="#publish">
+      <span class="gi">🚀</span>
+      <div><h3 data-i18n="guidePublishTitle"></h3><p data-i18n="guidePublishDesc"></p></div>
+      <span class="arrow">›</span>
+    </a>
+  </div>
+</div>
+<div id="pageView" hidden></div>
+</div>
+
+<div class="ob-overlay" id="obOverlay">
+  <div class="ob" id="obBox"></div>
 </div>
 
 <div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
@@ -188,6 +234,9 @@
 
 <footer>
   <span data-i18n="footer"></span><br>
+  <a href="#deploy" data-i18n="guideDeployTitle"></a> ·
+  <a href="#publish" data-i18n="guidePublishTitle"></a> ·
+  <a href="javascript:startOnboarding()" data-i18n="tutorial"></a> ·
   <a href="https://github.com/ficiverson/open-clone-marketplace" data-i18n="contribute"></a>
 </footer>
 
@@ -215,19 +264,39 @@ const I18N = {
     info: "Información",
     infoRows: { version: "Versión", published: "Publicada", updated: "Actualizada", backend: "Backend", auth: "Login", repo: "Repositorio", license: "Licencia" },
     deployNote: "El botón OBTENER abre Claude con el prompt listo. Requiere tener instalada la skill <a href='skill/clone-deployer.skill'>clone-deployer</a> (una sola vez, sirve para todas las apps). Tendrás tu propia instancia con tus datos.",
-    howtoTitle: "¿Cómo despliego una app? (sin saber programar)",
-    howtoSteps: [
-      "Descarga la skill <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> e instálala en Claude (arrastra el archivo al chat o Ajustes → Capacidades).",
-      "Elige una app del catálogo y copia el enlace de su repositorio.",
-      "Pídele a Claude: <em>«despliega esta app: &lt;enlace&gt;»</em>.",
-      "Claude lee el manifest de la app y te guía paso a paso hasta que está online."
+    guideDeployTitle: "Consigue tu propia app",
+    guideDeployDesc: "Guía paso a paso para desplegar cualquier app del catálogo sin saber programar.",
+    guidePublishTitle: "Publica tu app clónica",
+    guidePublishDesc: "Cómo generar el manifest de tu repo y aparecer en el catálogo.",
+    back: "‹ Volver al catálogo",
+    tutorial: "Ver tutorial",
+    obSkip: "Saltar", obNext: "Siguiente", obPrev: "Anterior", obDone: "Explorar el catálogo",
+    obSlides: [
+      { i: "🛍️", t: "Bienvenido a Clone Marketplace", b: "Un catálogo de apps clónicas open source (tipo Splitwise, Trello…) que despliegas en <strong>tu propia cuenta</strong>. Nada de suscripciones ni servidores de terceros: la app es tuya, los datos son tuyos y el coste es cero en los planes gratuitos." },
+      { i: "🧩", t: "Todo funciona con skills de Claude", b: "Una <strong>skill</strong> es un archivo que le enseña a Claude un procedimiento. Aquí hay dos: <strong>clone-deployer</strong> (despliega cualquier app del catálogo) y <strong>clonefest-generator</strong> (prepara tu app para publicarla). Se instalan una sola vez arrastrándolas a Claude." },
+      { i: "📲", t: "Conseguir una app", b: "Instala la skill clone-deployer, pulsa <strong>OBTENER</strong> en cualquier app y se abrirá Claude con todo listo. Te guiará paso a paso (~30 min la primera vez) hasta que tu app esté online. Sin saber programar." },
+      { i: "🚀", t: "¿Tienes una app clónica?", b: "Publícala: la skill clonefest-generator inspecciona tu repositorio y genera su manifest. Abres un PR, lo revisamos y tu app aparece en el catálogo para que cualquiera la despliegue. Consulta las guías 📲 y 🚀 al final de la página cuando las necesites." }
     ],
-    publishTitle: "¿Tienes una app clónica? Publícala",
-    publishSteps: [
-      "Instala la skill <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> en Claude y pídele que genere el <code>clonefest.json</code> de tu repo.",
-      "Haz commit del manifest en la raíz de tu repositorio.",
-      "Abre un PR añadiendo tu manifest a <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (ver <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guía</a>)."
-    ],
+    pages: {
+      deploy: `
+        <a class="back" href="#">‹ Volver al catálogo</a>
+        <h1>Consigue tu propia app 📲</h1>
+        <p class="lead">Cada app del catálogo se despliega en tu propia cuenta (Firebase, Supabase…): tu instancia, tus datos, gratis en los planes free. No necesitas saber programar — Claude hace el trabajo técnico y tú decides.</p>
+        <div class="step"><div class="num">1</div><div><h3>Instala la skill clone-deployer (solo una vez)</h3><p>Una skill es un archivo que le enseña a Claude un procedimiento. Descárgala y arrástrala a un chat de Claude, o añádela en Ajustes → Capacidades. Sirve para todas las apps del catálogo.</p><a class="btn-inline" href="skill/clone-deployer.skill">Descargar clone-deployer</a></div></div>
+        <div class="step"><div class="num">2</div><div><h3>Elige una app y pulsa OBTENER</h3><p>El botón abre Claude (app de escritorio si la tienes, web si no) con el prompt ya escrito. Alternativa manual: copia el enlace del repositorio y pídele a Claude «despliega esta app: &lt;enlace&gt;».</p></div></div>
+        <div class="step"><div class="num">3</div><div><h3>Sigue los pasos con Claude</h3><p>Claude lee el manifest de la app, comprueba qué herramientas te faltan y te va guiando: te pedirá crear una cuenta gratuita del backend (p. ej. Firebase) y hacer un par de clics en su consola; los comandos los ejecuta él. La primera vez tardarás ~30 minutos.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h3>Comprueba y disfruta</h3><p>Al final tendrás una URL propia (p. ej. tu-app.web.app) para ti y tu gente. Para actualizarla más adelante, pídele a Claude «actualiza mi app».</p></div></div>
+        <div class="callout"><strong>Seguridad:</strong> los manifests del catálogo se revisan antes de publicarse y todo el código es open source. Aun así, nunca compartas contraseñas en el chat: cuando haga falta iniciar sesión, Claude te pedirá que lo hagas tú en tu navegador.</div>`,
+      publish: `
+        <a class="back" href="#">‹ Volver al catálogo</a>
+        <h1>Publica tu app clónica 🚀</h1>
+        <p class="lead">Requisitos: repo público en GitHub con licencia OSI (MIT, Apache-2.0, GPL…), README con instrucciones de despliegue, y despliegue autocontenido — cada usuario usa su propio backend, nunca el tuyo (sin API keys ni project IDs tuyos en el repo).</p>
+        <div class="step"><div class="num">1</div><div><h3>Genera el manifest con la skill</h3><p>Instala clonefest-generator en Claude y pídele «genera el clonefest de mi repo». Inspecciona tu código (stack, dueño, fechas, pasos del README) y crea un <code>clonefest.json</code> validado. También puedes copiar la <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/clonefest.template.json">plantilla</a> a mano.</p><a class="btn-inline" href="skill/clonefest-generator.skill">Descargar clonefest-generator</a></div></div>
+        <div class="step"><div class="num">2</div><div><h3>Haz commit del manifest</h3><p>El <code>clonefest.json</code> va en la raíz de tu repositorio, en la rama principal.</p></div></div>
+        <div class="step"><div class="num">3</div><div><h3>Abre un PR al catálogo</h3><p>Añade tu manifest a <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json"><code>apps.json</code></a> apuntando al SHA del commit (así lo que se revisa no puede cambiar después). La CI lo valida contra el schema y lintea los pasos de despliegue.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h3>Revisión y publicación</h3><p>Revisamos a mano los pasos de despliegue (se ejecutan en máquinas de usuarios) y tu app aparece en el catálogo con su ficha, capturas y botón OBTENER.</p></div></div>
+        <div class="callout"><strong>Marcas:</strong> tu app es un proyecto independiente «inspirado en» el original. Usa tu propio nombre e icono, nunca los del original. Detalles en la <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md">guía de contribución</a>.</div>`
+    },
     footer: "Clone Marketplace — apps clónicas autoalojadas. Proyectos independientes sin afiliación con las apps originales.",
     contribute: "Publica tu app"
   },
@@ -253,19 +322,39 @@ const I18N = {
     info: "Information",
     infoRows: { version: "Version", published: "Published", updated: "Updated", backend: "Backend", auth: "Sign-in", repo: "Repository", license: "License" },
     deployNote: "The GET button opens Claude with the prompt ready. It requires the <a href='skill/clone-deployer.skill'>clone-deployer</a> skill installed (once — it works for every app). You'll get your own instance with your own data.",
-    howtoTitle: "How do I deploy an app? (no coding needed)",
-    howtoSteps: [
-      "Download the <a href='skill/clone-deployer.skill'><code>clone-deployer</code></a> skill and install it in Claude (drag the file into the chat or Settings → Capabilities).",
-      "Pick an app from the catalog and copy its repository link.",
-      "Ask Claude: <em>“deploy this app: &lt;link&gt;”</em>.",
-      "Claude reads the app's manifest and guides you step by step until it's live."
+    guideDeployTitle: "Get your own app",
+    guideDeployDesc: "Step-by-step guide to deploy any catalog app, no coding needed.",
+    guidePublishTitle: "Publish your clone app",
+    guidePublishDesc: "How to generate your repo's manifest and get listed in the catalog.",
+    back: "‹ Back to catalog",
+    tutorial: "View tutorial",
+    obSkip: "Skip", obNext: "Next", obPrev: "Back", obDone: "Explore the catalog",
+    obSlides: [
+      { i: "🛍️", t: "Welcome to Clone Marketplace", b: "A catalog of open-source clone apps (Splitwise-style, Trello-style…) that you deploy on <strong>your own account</strong>. No subscriptions, no third-party servers: the app is yours, the data is yours, and free tiers cost nothing." },
+      { i: "🧩", t: "Everything runs on Claude skills", b: "A <strong>skill</strong> is a file that teaches Claude a procedure. There are two here: <strong>clone-deployer</strong> (deploys any catalog app) and <strong>clonefest-generator</strong> (prepares your app for publishing). Install them once by dragging them into Claude." },
+      { i: "📲", t: "Getting an app", b: "Install the clone-deployer skill, hit <strong>GET</strong> on any app and Claude opens ready to go. It walks you through every step (~30 min the first time) until your app is live. No coding needed." },
+      { i: "🚀", t: "Built a clone app?", b: "Publish it: the clonefest-generator skill inspects your repository and generates its manifest. Open a PR, we review it, and your app joins the catalog for anyone to deploy. Check the 📲 and 🚀 guides at the bottom of the page whenever you need them." }
     ],
-    publishTitle: "Built a clone app? Publish it",
-    publishSteps: [
-      "Install the <a href='skill/clonefest-generator.skill'><code>clonefest-generator</code></a> skill in Claude and ask it to generate your repo's <code>clonefest.json</code>.",
-      "Commit the manifest at the root of your repository.",
-      "Open a PR adding your manifest to <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json'><code>apps.json</code></a> (see the <a href='https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md'>guide</a>)."
-    ],
+    pages: {
+      deploy: `
+        <a class="back" href="#">‹ Back to catalog</a>
+        <h1>Get your own app 📲</h1>
+        <p class="lead">Every catalog app deploys to your own account (Firebase, Supabase…): your instance, your data, free on free tiers. No coding needed — Claude does the technical work and you stay in control.</p>
+        <div class="step"><div class="num">1</div><div><h3>Install the clone-deployer skill (once)</h3><p>A skill is a file that teaches Claude a procedure. Download it and drag it into a Claude chat, or add it in Settings → Capabilities. It works for every app in the catalog.</p><a class="btn-inline" href="skill/clone-deployer.skill">Download clone-deployer</a></div></div>
+        <div class="step"><div class="num">2</div><div><h3>Pick an app and hit GET</h3><p>The button opens Claude (desktop app if you have it, web otherwise) with the prompt pre-written. Manual alternative: copy the repository link and ask Claude "deploy this app: &lt;link&gt;".</p></div></div>
+        <div class="step"><div class="num">3</div><div><h3>Follow the steps with Claude</h3><p>Claude reads the app's manifest, checks which tools you're missing and guides you through: it will ask you to create a free backend account (e.g. Firebase) and click a couple of things in its console; the commands it runs itself. First time takes ~30 minutes.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h3>Verify and enjoy</h3><p>You'll end up with your own URL (e.g. your-app.web.app) for you and your people. To update later, just ask Claude "update my app".</p></div></div>
+        <div class="callout"><strong>Security:</strong> catalog manifests are reviewed before listing and all code is open source. Still, never share passwords in the chat: when a login is needed, Claude will ask you to do it yourself in your browser.</div>`,
+      publish: `
+        <a class="back" href="#">‹ Back to catalog</a>
+        <h1>Publish your clone app 🚀</h1>
+        <p class="lead">Requirements: public GitHub repo with an OSI license (MIT, Apache-2.0, GPL…), a README with deploy instructions, and self-contained deployments — every user brings their own backend, never yours (no API keys or project IDs of yours in the repo).</p>
+        <div class="step"><div class="num">1</div><div><h3>Generate the manifest with the skill</h3><p>Install clonefest-generator in Claude and ask "generate the clonefest for my repo". It inspects your code (stack, owner, dates, README steps) and writes a validated <code>clonefest.json</code>. You can also fill the <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/clonefest.template.json">template</a> by hand.</p><a class="btn-inline" href="skill/clonefest-generator.skill">Download clonefest-generator</a></div></div>
+        <div class="step"><div class="num">2</div><div><h3>Commit the manifest</h3><p><code>clonefest.json</code> goes at the root of your repository, on the default branch.</p></div></div>
+        <div class="step"><div class="num">3</div><div><h3>Open a PR to the catalog</h3><p>Add your manifest to <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/apps.json"><code>apps.json</code></a> pinned to a commit SHA (so what gets reviewed can't change afterwards). CI validates it against the schema and lints the deploy steps.</p></div></div>
+        <div class="step"><div class="num">4</div><div><h3>Review and go live</h3><p>We hand-review the deploy steps (they run on users' machines) and your app joins the catalog with its sheet, screenshots and GET button.</p></div></div>
+        <div class="callout"><strong>Trademarks:</strong> your app is an independent project "inspired by" the original. Use your own name and icon, never the original's. Details in the <a href="https://github.com/ficiverson/open-clone-marketplace/blob/main/CONTRIBUTING.md">contributing guide</a>.</div>`
+    },
     footer: "Clone Marketplace — self-hosted clone apps. Independent projects, not affiliated with the original apps.",
     contribute: "Publish your app"
   }
@@ -316,10 +405,59 @@ function setLang(l) {
   document.getElementById("btn-en").classList.toggle("active", l === "en");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
-  document.getElementById("howtoSteps").innerHTML = I18N[l].howtoSteps.map(s => `<li>${s}</li>`).join("");
-  document.getElementById("publishSteps").innerHTML = I18N[l].publishSteps.map(s => `<li>${s}</li>`).join("");
   renderCats(); render(); renderHero();
+  const pg = currentPage();
+  if (pg) renderPage(pg);
+  if (document.getElementById("obOverlay").classList.contains("open")) renderOnboard();
 }
+
+/* ── Guide pages (#deploy / #publish) ── */
+const currentPage = () => location.hash === "#deploy" ? "deploy" : location.hash === "#publish" ? "publish" : null;
+
+function renderPage(kind) {
+  const el = document.getElementById("pageView");
+  el.innerHTML = `<div class="page">${I18N[lang].pages[kind]}</div>`;
+}
+
+function route() {
+  const pg = currentPage();
+  document.getElementById("catalogView").hidden = !!pg;
+  document.getElementById("pageView").hidden = !pg;
+  if (pg) { closeSheet(true); renderPage(pg); window.scrollTo(0, 0); }
+  else {
+    const id = hashApp();
+    if (id) openSheet(id, true); else closeSheet(true);
+  }
+}
+window.addEventListener("hashchange", route);
+
+/* ── Onboarding (first visit) ── */
+let obStep = 0;
+function renderOnboard() {
+  const s = I18N[lang].obSlides, cur = s[obStep], last = obStep === s.length - 1;
+  document.getElementById("obBox").innerHTML = `
+    <div class="ob-ico">${cur.i}</div>
+    <h2>${cur.t}</h2>
+    <p>${cur.b}</p>
+    <div class="dots">${s.map((_, j) => `<span class="dot ${j === obStep ? "on" : ""}"></span>`).join("")}</div>
+    <div class="ob-actions">
+      ${obStep > 0 ? `<button class="ob-prev" onclick="obMove(-1)">${t("obPrev")}</button>` : ""}
+      <button class="ob-next" onclick="${last ? "endOnboarding()" : "obMove(1)"}">${last ? t("obDone") : t("obNext")}</button>
+    </div>
+    ${last ? "" : `<button class="ob-skip" onclick="endOnboarding()">${t("obSkip")}</button>`}`;
+}
+function obMove(d) { obStep = Math.max(0, Math.min(I18N[lang].obSlides.length - 1, obStep + d)); renderOnboard(); }
+function startOnboarding() {
+  obStep = 0; renderOnboard();
+  document.getElementById("obOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function endOnboarding() {
+  localStorage.setItem("onboardingDone", "1");
+  document.getElementById("obOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+if (!localStorage.getItem("onboardingDone")) setTimeout(startOnboarding, 400);
 
 function renderCats() {
   const cats = [...new Set(manifests.map(m => m.category || "other"))];
@@ -426,11 +564,8 @@ function closeSheet(fromHistory) {
   document.body.style.overflow = "";
   if (!fromHistory && hashApp()) history.pushState(null, "", location.pathname + location.search);
 }
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
-window.addEventListener("popstate", () => {
-  const id = hashApp();
-  if (id) openSheet(id, true); else closeSheet(true);
-});
+document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSheet(); endOnboarding(); } });
+window.addEventListener("popstate", () => route());
 
 async function load() {
   try {
@@ -445,8 +580,7 @@ async function load() {
       return m;
     }))).filter(Boolean);
     renderHero(); renderCats(); render();
-    const deep = hashApp();
-    if (deep) openSheet(deep, true);
+    route();
   } catch {
     document.getElementById("apps").innerHTML = `<div class="empty">Could not load catalog.</div>`;
   }
