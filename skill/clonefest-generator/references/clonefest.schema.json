@@ -9,7 +9,7 @@
     "clonefest": { "type": "string", "enum": ["1.0"], "description": "Spec version" },
     "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "description": "Unique slug in the catalog" },
     "name": { "type": "string" },
-    "clone_of": { "type": "string", "description": "Original app this project clones (e.g. Split-style app, Trello)" },
+    "clone_of": { "type": "string", "description": "Original app this project clones (e.g. Split-style app, Plan)" },
     "category": { "type": "string", "enum": ["finance", "productivity", "social", "media", "communication", "health", "other"] },
     "tagline": { "$ref": "#/$defs/i18nText" },
     "description": { "$ref": "#/$defs/i18nText" },
