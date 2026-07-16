@@ -8,7 +8,7 @@ Prioridad: P0 = imprescindible para lanzar · P1 = primera iteración · P2 = de
 - [x] **MKT-2** Activar GitHub Pages (Settings → Pages → Deploy from branch → main). Verificar que `https://ficiverson.github.io/open-clone-marketplace/` carga.
 - [x] **MKT-3** Commit + push del `clonefest.json` en el repo `share` (rama main) para que la landing pueda leerlo.
 - [x] **MKT-4** Colocar `clone-deployer.skill` en `catalog/skill/` del repo marketplace (la landing enlaza a esa ruta).
-- [ ] **MKT-5** Prueba end-to-end: instalar la skill en Claude, pedir "despliega esta app: github.com/ficiverson/share" y llegar a una instancia funcionando en una cuenta Firebase limpia.
+- [x] **MKT-5** Prueba end-to-end: instalar la skill en Claude, pedir "despliega esta app: github.com/ficiverson/share" y llegar a una instancia funcionando en una cuenta Firebase limpia.
 
 ## P0.5 — Seguridad y confianza (antes de aceptar apps de terceros)
 

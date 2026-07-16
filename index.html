@@ -141,6 +141,7 @@
   code { background: var(--chip); padding: 2px 6px; border-radius: 5px; font-size: .85em; }
   footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 26px 20px 40px; line-height: 1.6; }
   .loading, .empty { color: var(--muted); padding: 60px 0; text-align: center; grid-column: 1/-1; }
+  .show-more { grid-column: 1/-1; border: none; background: var(--chip); color: var(--accent); font-weight: 600; font-size: .9rem; padding: 13px; border-radius: 12px; cursor: pointer; }
   @media (max-width: 640px) {
     .hero-card { flex-direction: column; text-align: center; padding: 26px 20px; }
     .hero-card .get { margin: 0 auto; }
@@ -248,6 +249,7 @@ const I18N = {
     allApps: "Todas las apps",
     loading: "Cargando catálogo…",
     empty: "No hay apps que coincidan.",
+    showMore: "Mostrar más",
     all: "Todas",
     get: "OBTENER", free: "Gratis · tu instancia",
     promptPrefix: "Despliega esta app en mi propia cuenta usando la skill clone-deployer: ",
@@ -306,6 +308,7 @@ const I18N = {
     allApps: "All apps",
     loading: "Loading catalog…",
     empty: "No matching apps.",
+    showMore: "Show more",
     all: "All",
     get: "GET", free: "Free · your instance",
     promptPrefix: "Deploy this app on my own account using the clone-deployer skill: ",
@@ -485,10 +488,15 @@ function renderHero() {
   document.getElementById("heroCard").onclick = () => openSheet(m.id);
 }
 
+const PAGE_SIZE = 10;
+let visibleCount = PAGE_SIZE;
+let lastQuery = "", lastCat = "all";
+
 function render() {
   const q = (document.getElementById("q").value || "").toLowerCase();
   const el = document.getElementById("apps");
   if (!manifests.length) return;
+  if (q !== lastQuery || activeCat !== lastCat) { visibleCount = PAGE_SIZE; lastQuery = q; lastCat = activeCat; }
   const list = manifests.filter(m => {
     if (activeCat !== "all" && (m.category || "other") !== activeCat) return false;
     if (!q) return true;
@@ -500,7 +508,8 @@ function render() {
     ].filter(Boolean).join(" ").toLowerCase();
     return q.split(/\s+/).every(term => hay.includes(term));
   });
-  el.innerHTML = list.length ? list.map(m => `
+  const page = list.slice(0, visibleCount);
+  el.innerHTML = page.length ? page.map(m => `
     <div class="app-row" onclick="openSheet('${esc(m.id)}')">
       ${iconHtml(m)}
       <div class="info">
@@ -513,7 +522,17 @@ function render() {
         <span class="free-note">${t("free")}</span>
       </div>
     </div>`).join("") : `<div class="empty">${t("empty")}</div>`;
+  if (list.length > visibleCount) {
+    el.insertAdjacentHTML("beforeend",
+      `<button class="show-more" id="moreSentinel" onclick="loadMore()">${t("showMore")} (${list.length - visibleCount})</button>`);
+    moreObserver.observe(document.getElementById("moreSentinel"));
+  }
 }
+
+function loadMore() { visibleCount += PAGE_SIZE; render(); }
+const moreObserver = new IntersectionObserver(entries => {
+  if (entries.some(e => e.isIntersecting)) loadMore();
+}, { rootMargin: "200px" });
 
 const hashApp = () => location.hash.startsWith("#app/") ? decodeURIComponent(location.hash.slice(5)) : null;
 

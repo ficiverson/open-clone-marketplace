@@ -1,0 +1,39 @@
+name: Package skills
+
+# Keeps the schema copy inside clonefest-generator in sync with spec/,
+# and rebuilds the downloadable .skill zips whenever their sources change.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "spec/clonefest.schema.json"
+      - "skill/*/**" # skill sources (SKILL.md, references/) — not the .skill zips at skill/ root
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync schema into clonefest-generator
+        run: cp spec/clonefest.schema.json skill/clonefest-generator/references/clonefest.schema.json
+
+      - name: Rebuild .skill packages (deterministic timestamps)
+        run: |
+          set -euo pipefail
+          cd skill
+          for s in clone-deployer clonefest-generator; do
+            find "$s" -exec touch -t 202601010000 {} +
+            rm -f "$s.skill"
+            zip -qrX "$s.skill" "$s/"
+          done
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add skill/
+          git diff --cached --quiet || (git commit -m "chore: sync schema and repackage skills" && git push)
