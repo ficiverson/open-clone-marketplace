@@ -3,7 +3,7 @@
   "clonefest": "1.0",
   "id": "streak",
   "name": "Streak",
-  "clone_of": "Streaks-style habit tracker",
+  "clone_of": "Habit tracker with streaks",
   "category": "health",
   "tagline": {
     "en": "Small habits, long streaks. Your data, your Firebase.",

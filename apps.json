@@ -6,15 +6,15 @@
     },
     {
       "id": "plan",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/plan/4b337db36c436272c4c9281f372ad576198769ec/clonefest.json"
+      "manifest": "https://raw.githubusercontent.com/ficiverson/plan/4cf0a9b1c01548969402a5cd0a42e37efc903aae/clonefest.json"
     },
     {
       "id": "streak",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/streak/0c1d1d2bf29119d1389d38a1f106b74b25e2b043/clonefest.json"
+      "manifest": "https://raw.githubusercontent.com/ficiverson/streak/954d8187503a17142c7da62068b0e0976442a914/clonefest.json"
     },
     {
       "id": "basket",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/basket/4c5e891bf5dd8a341ac61834ea9b433cd34f8818/clonefest.json"
+      "manifest": "https://raw.githubusercontent.com/ficiverson/basket/f17590e9fb79f4884a3b0d63f9794d2cc52230f9/clonefest.json"
     }
   ]
 }

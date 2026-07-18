@@ -3,15 +3,15 @@
   "clonefest": "1.0",
   "id": "plan",
   "name": "Plan",
-  "clone_of": "Trello-style kanban",
+  "clone_of": "Kanban boards",
   "category": "productivity",
   "tagline": {
     "en": "Kanban boards for your team. Your data, your Firebase.",
     "es": "Tableros kanban para tu equipo. Tus datos, tu Firebase."
   },
   "description": {
-    "en": "Trello-style app for organizing work with boards, columns and drag-and-drop cards, shared with your team via invite codes. Flutter (web/Android/iOS) with Firebase Auth + Firestore: every deployment is a fully independent instance.",
-    "es": "App estilo Trello para organizar trabajo con tableros, columnas y tarjetas arrastrables, compartidos por código de invitación. Flutter (web/Android/iOS) con Firebase Auth + Firestore: cada despliegue es una instancia independiente."
+    "en": "Kanban app for organizing work with boards, columns and drag-and-drop cards, shared with your team via invite codes. Flutter (web/Android/iOS) with Firebase Auth + Firestore: every deployment is a fully independent instance.",
+    "es": "App de tableros kanban para organizar trabajo con columnas y tarjetas arrastrables, compartidos por código de invitación. Flutter (web/Android/iOS) con Firebase Auth + Firestore: cada despliegue es una instancia independiente."
   },
   "owner": {
     "name": "Fernando Souto Gonzalez",
