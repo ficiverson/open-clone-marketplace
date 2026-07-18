@@ -601,12 +601,13 @@ window.addEventListener("popstate", () => route());
 
 async function load() {
   try {
-    const idx = await (await fetch("apps.json")).json();
+    // no-cache: revalidate against the server so catalog updates show up immediately
+    const idx = await (await fetch("apps.json", { cache: "no-cache" })).json();
     manifests = (await Promise.all(idx.apps.map(async a => {
       // Same-origin cache first (refreshed by CI); raw GitHub as fallback.
       let m = null;
       for (const url of [`cache/${a.id}.json`, a.manifest]) {
-        try { const r = await fetch(url); if (r.ok) { m = await r.json(); break; } } catch {}
+        try { const r = await fetch(url, { cache: "no-cache" }); if (r.ok) { m = await r.json(); break; } } catch {}
       }
       if (m) m._url = a.manifest; // icons/screenshots resolve against the app repo
       return m;
