@@ -1,20 +1,21 @@
 {
   "apps": [
     {
-      "id": "share",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/share/68bcfe10e01dc130f1ff1d58b84d6f79caa75f5a/clonefest.json"
+      "id": "basket",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/basket/f17590e9fb79f4884a3b0d63f9794d2cc52230f9/clonefest.json"
     },
     {
       "id": "plan",
       "manifest": "https://raw.githubusercontent.com/ficiverson/plan/4cf0a9b1c01548969402a5cd0a42e37efc903aae/clonefest.json"
     },
     {
-      "id": "streak",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/streak/954d8187503a17142c7da62068b0e0976442a914/clonefest.json"
+      "id": "share",
+      "featured": true,
+      "manifest": "https://raw.githubusercontent.com/ficiverson/share/68bcfe10e01dc130f1ff1d58b84d6f79caa75f5a/clonefest.json"
     },
     {
-      "id": "basket",
-      "manifest": "https://raw.githubusercontent.com/ficiverson/basket/f17590e9fb79f4884a3b0d63f9794d2cc52230f9/clonefest.json"
+      "id": "streak",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/streak/954d8187503a17142c7da62068b0e0976442a914/clonefest.json"
     }
   ]
 }

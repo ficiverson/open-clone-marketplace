@@ -369,6 +369,7 @@ const I18N = {
 
 let lang = localStorage.getItem("lang") || (navigator.language.startsWith("es") ? "es" : "en");
 let manifests = [];
+let featuredId = null;
 let activeCat = "all";
 
 const t = k => I18N[lang][k];
@@ -476,7 +477,7 @@ function renderCats() {
 function setCat(c) { activeCat = c; renderCats(); render(); }
 
 function renderHero() {
-  const m = manifests[0];
+  const m = manifests.find(x => x.id === featuredId) || manifests[0];
   if (!m) return;
   document.getElementById("hero").hidden = false;
   document.getElementById("heroCard").innerHTML = `
@@ -612,6 +613,8 @@ async function load() {
       if (m) m._url = a.manifest; // icons/screenshots resolve against the app repo
       return m;
     }))).filter(Boolean);
+    manifests.sort((a, b) => a.name.localeCompare(b.name));
+    featuredId = (idx.apps.find(a => a.featured) || {}).id || null;
     renderHero(); renderCats(); render();
     route();
   } catch {
