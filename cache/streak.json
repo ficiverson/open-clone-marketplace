@@ -1,0 +1,206 @@
+{
+  "$schema": "https://ficiverson.github.io/open-clone-marketplace/spec/clonefest.schema.json",
+  "clonefest": "1.0",
+  "id": "streak",
+  "name": "Streak",
+  "clone_of": "Streaks-style habit tracker",
+  "category": "health",
+  "tagline": {
+    "en": "Small habits, long streaks. Your data, your Firebase.",
+    "es": "Pequeños hábitos, grandes rachas. Tus datos, tu Firebase."
+  },
+  "description": {
+    "en": "Habit tracker with daily check-ins, current and best streaks, and a 7-day mini view per habit. Flutter (web/Android/iOS) with Firebase Auth + Firestore: every deployment is a fully independent, private instance.",
+    "es": "Registro de hábitos con check diario, racha actual y mejor racha, y mini-vista de 7 días por hábito. Flutter (web/Android/iOS) con Firebase Auth + Firestore: cada despliegue es una instancia privada e independiente."
+  },
+  "owner": {
+    "name": "Fernando Souto Gonzalez",
+    "github": "ficiverson",
+    "email": "efexepe@gmail.com"
+  },
+  "repo": "https://github.com/ficiverson/streak",
+  "license": "MIT",
+  "version": "0.1.0+1",
+  "published_at": "2026-07-16",
+  "updated_at": "2026-07-16",
+  "screenshots": [
+    "screenshots/app-1.png",
+    "screenshots/app-2.png",
+    "screenshots/app-3.png"
+  ],
+  "platforms": [
+    "web",
+    "android",
+    "ios"
+  ],
+  "stack": {
+    "frontend": {
+      "framework": "flutter",
+      "language": "dart",
+      "min_version": "3.22"
+    },
+    "backend": {
+      "provider": "firebase",
+      "services": [
+        "auth",
+        "firestore",
+        "hosting"
+      ],
+      "auth_providers": [
+        "email_password"
+      ]
+    }
+  },
+  "requirements": {
+    "tools": [
+      {
+        "name": "flutter",
+        "min_version": "3.22",
+        "install": "https://docs.flutter.dev/get-started/install"
+      },
+      {
+        "name": "node",
+        "min_version": "18",
+        "install": "https://nodejs.org"
+      },
+      {
+        "name": "firebase-tools",
+        "install": "npm install -g firebase-tools"
+      },
+      {
+        "name": "flutterfire_cli",
+        "install": "dart pub global activate flutterfire_cli"
+      },
+      {
+        "name": "git",
+        "install": "https://git-scm.com"
+      }
+    ],
+    "accounts": [
+      {
+        "name": "Google / Firebase",
+        "url": "https://console.firebase.google.com",
+        "cost": "free tier (Spark) is enough for web"
+      }
+    ]
+  },
+  "deploy": {
+    "target": "firebase-hosting",
+    "estimated_minutes": 30,
+    "steps": [
+      {
+        "id": "clone",
+        "type": "shell",
+        "run": "git clone https://github.com/ficiverson/streak.git && cd streak",
+        "title": {
+          "en": "Clone the repository",
+          "es": "Clona el repositorio"
+        }
+      },
+      {
+        "id": "scaffold",
+        "type": "shell",
+        "run": "flutter create . --platforms=web",
+        "title": {
+          "en": "Generate the web platform folder",
+          "es": "Genera la carpeta de plataforma web"
+        }
+      },
+      {
+        "id": "firebase-project",
+        "type": "manual",
+        "url": "https://console.firebase.google.com",
+        "doc": "README.md#2-create-the-firebase-project",
+        "title": {
+          "en": "Create a Firebase project and enable Authentication (Email/Password) and Cloud Firestore (production mode)",
+          "es": "Crea un proyecto Firebase y activa Authentication (Email/Password) y Cloud Firestore (modo producción)"
+        }
+      },
+      {
+        "id": "firebase-login",
+        "type": "shell",
+        "run": "firebase login",
+        "title": {
+          "en": "Log in to Firebase CLI",
+          "es": "Inicia sesión en Firebase CLI"
+        }
+      },
+      {
+        "id": "flutterfire",
+        "type": "shell",
+        "run": "flutterfire configure",
+        "title": {
+          "en": "Link the app to YOUR Firebase project (regenerates firebase_options.dart)",
+          "es": "Conecta la app a TU proyecto Firebase (regenera firebase_options.dart)"
+        }
+      },
+      {
+        "id": "deps",
+        "type": "shell",
+        "run": "flutter pub get",
+        "title": {
+          "en": "Install dependencies",
+          "es": "Instala dependencias"
+        }
+      },
+      {
+        "id": "rules",
+        "type": "manual",
+        "doc": "README.md#5-firestore-security-rules",
+        "title": {
+          "en": "Apply the Firestore security rules from README section 5",
+          "es": "Aplica las reglas de seguridad de Firestore de la sección 5 del README"
+        }
+      },
+      {
+        "id": "test-local",
+        "type": "shell",
+        "run": "flutter run -d chrome",
+        "optional": true,
+        "title": {
+          "en": "Run locally to verify",
+          "es": "Ejecuta en local para verificar"
+        }
+      },
+      {
+        "id": "build",
+        "type": "shell",
+        "run": "flutter build web --release",
+        "title": {
+          "en": "Build the web app",
+          "es": "Compila la app web"
+        }
+      },
+      {
+        "id": "firebase-use",
+        "type": "shell",
+        "run": "firebase use --add",
+        "title": {
+          "en": "Select your Firebase project for deploys",
+          "es": "Selecciona tu proyecto Firebase para desplegar"
+        }
+      },
+      {
+        "id": "deploy",
+        "type": "shell",
+        "run": "firebase deploy --only hosting",
+        "title": {
+          "en": "Deploy to Firebase Hosting",
+          "es": "Despliega a Firebase Hosting"
+        }
+      }
+    ],
+    "verify": {
+      "en": "Open https://<your-project-id>.web.app, create an account, add a habit and check it off — the streak should show 1 day.",
+      "es": "Abre https://<tu-project-id>.web.app, crea una cuenta, añade un hábito y márcalo — la racha debería mostrar 1 día."
+    }
+  },
+  "docs": {
+    "readme": "README.md",
+    "data_model": "README.md#8-data-model"
+  },
+  "support": {
+    "issues": "https://github.com/ficiverson/streak/issues"
+  },
+  "icon": "icon.png"
+}

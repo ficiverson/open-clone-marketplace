@@ -3,6 +3,18 @@
     {
       "id": "share",
       "manifest": "https://raw.githubusercontent.com/ficiverson/share/ee7e3aad8032aaef9f0e0b5e7d454748c1adcae5/clonefest.json"
+    },
+    {
+      "id": "plan",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/plan/4b337db36c436272c4c9281f372ad576198769ec/clonefest.json"
+    },
+    {
+      "id": "streak",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/streak/0c1d1d2bf29119d1389d38a1f106b74b25e2b043/clonefest.json"
+    },
+    {
+      "id": "basket",
+      "manifest": "https://raw.githubusercontent.com/ficiverson/basket/4c5e891bf5dd8a341ac61834ea9b433cd34f8818/clonefest.json"
     }
   ]
 }
